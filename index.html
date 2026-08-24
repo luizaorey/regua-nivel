@@ -65,7 +65,7 @@ input[type=range]{width:100%;accent-color:var(--blue)}
       <section class="panel"><div class="panel-title">CONFIGURAÇÃO DO VASO</div><div class="panel-body">
         <div class="ctl" data-f="vaso"><div class="top"><label for="vas">Altura útil do vaso</label><span><input type="number" class="numbox amber" id="oVas" value="900" min="100" max="6000" step="1"><span class="unitmm">mm</span></span></div><input type="range" id="vas" min="100" max="4000" step="1" value="900"></div>
         <div class="ctl" data-f="span"><div class="top"><label for="spn" id="lblSpan">Span · 0 a 100%</label><span><input type="number" class="numbox amber" id="oSpn" value="850" min="10" max="6000" step="1"><span class="unitmm">mm</span></span></div><input type="range" id="spn" min="10" max="4000" step="1" value="850"></div>
-        <div class="ctl" data-f="nivel"><div class="top"><label for="lvl">LG · nível entre tomadas (0–100%)</label><span><input type="number" class="numbox" id="oLvl" value="0" min="0" step="1"><span class="unitmm">mm</span></span></div><input type="range" id="lvl" min="0" max="900" step="1" value="0"></div>
+        <div class="ctl" data-f="nivel"><div class="top"><label for="lvl">LG · nível de produto (0–100%)</label><span><input type="number" class="numbox" id="oLvl" value="0" min="0" step="1"><span class="unitmm">mm</span></span></div><input type="range" id="lvl" min="0" max="900" step="1" value="0"></div>
       </div></section>
 
       <section class="panel"><div class="panel-title">GEOMETRIA / TRANSMISSOR</div><div class="panel-body">
@@ -268,15 +268,9 @@ function calc(){
 
 /* ---------------- referência do LG ---------------- */
 function getLGRange(r){
-  // Distância vertical usada pela régua LG: sempre da referência inferior à superior.
-  // Dois selos / selo na alta + capilar na baixa: distância real entre as duas tomadas.
-  if(atual === "remoto" || atual === "capilarLP") return Math.max(1, r.vaso + r.inf + r.sup);
-  // Perna úmida: da tomada de alta até a referência superior do pote/perna de baixa.
-  if(atual === "pernaumida") return Math.max(1, r.vaso + r.inf + r.pot);
-  // Câmara externa: régua entre as conexões inferior e superior da câmara.
-  if(atual === "camara") return Math.max(1, r.vaso);
-  // Interface e direto: usa a faixa de medição configurada como referência útil.
-  return Math.max(1, r.spn || r.vaso);
+  // Nosso padrão: o nível de produto vai de 0 até a altura do vaso, sempre —
+  // independente do arranjo (a distância entre tomadas não entra aqui).
+  return Math.max(1, r.vaso);
 }
 
 /* ---------------- desenho ---------------- */
