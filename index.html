@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0C1418">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Régua de Nível">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<title>Régua de Nível · Transmissores de pressão diferencial</title>
+<style>
+:root{
+  --bg:#0C1418;
+  --panel:#132027;
+  --panel2:#0F1B21;
+  --line:#22343D;
+  --line2:#2E454F;
+  --ink:#DEE9ED;
+  --ink2:#8AA2AC;
+  --ink3:#718E97;
+  --amber:#FFB020;
+  --eh:#2F9BD8;
+  --ok:#4FD18B;
+  --bad:#FF6B5A;
+  --liq:#1E6E9E;
+  --liq2:#8A6A3A;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink)}
+body{
+  font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  -webkit-text-size-adjust:100%;
+}
+.cond{font-family:"Avenir Next Condensed","HelveticaNeue-CondensedBold","Helvetica Neue Condensed",Oswald,Impact,sans-serif}
+.mono{font-family:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;font-variant-numeric:tabular-nums}
+.wrap{max-width:760px;margin:0 auto;padding:0 14px 60px}
+
+/* ---------- cabeçalho ---------- */
+header{padding:18px 0 12px;border-bottom:1px solid var(--line)}
+.eyebrow{
+  font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink3);
+  display:flex;justify-content:space-between;align-items:center;gap:10px
+}
+.tagline{display:flex;align-items:center;gap:10px;margin-top:8px}
+.tagbox{
+  flex:1;min-width:0;background:transparent;border:0;border-bottom:1px solid var(--line2);
+  color:var(--amber);font-size:27px;letter-spacing:.05em;padding:2px 0 5px;
+  font-family:"Avenir Next Condensed","HelveticaNeue-CondensedBold",sans-serif;font-weight:600;
+}
+.tagbox:focus{outline:0;border-bottom-color:var(--amber)}
+
+/* ---------- vasos salvos ---------- */
+.saved{display:flex;gap:7px;overflow-x:auto;padding:12px 0 4px;-webkit-overflow-scrolling:touch}
+.saved::-webkit-scrollbar{display:none}
+.chip{
+  flex:0 0 auto;background:var(--panel);border:1px solid var(--line);color:var(--ink2);
+  padding:11px 14px;border-radius:999px;font-size:12.5px;letter-spacing:.04em;cursor:pointer;
+  display:flex;align-items:center;gap:7px;white-space:nowrap
+}
+.chip:active{background:var(--panel2)}
+.chip.on{border-color:var(--amber);color:var(--amber);background:#1B1608}
+.chip .x{color:var(--ink3);font-size:15px;line-height:1}
+.chip.add{border-style:dashed;color:var(--ink3)}
+
+/* ---------- arranjo ---------- */
+.sect{margin-top:22px}
+.sect > h2{
+  font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink3);
+  margin:0 0 10px;font-weight:600
+}
+.arrs{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+@media(max-width:430px){.arrs{grid-template-columns:1fr}}
+.arr{
+  text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:9px;
+  padding:13px 14px;color:var(--ink2);cursor:pointer;font-size:13px;line-height:1.35
+}
+.arr b{display:block;color:var(--ink);font-size:13.5px;font-weight:600;letter-spacing:.01em}
+.arr span{display:block;font-size:11.5px;color:var(--ink3);margin-top:2px}
+.arr.on{border-color:var(--eh);background:#0D2430}
+.arr.on b{color:var(--eh)}
+
+/* ---------- display do transmissor ---------- */
+.hud{
+  margin-top:18px;background:linear-gradient(180deg,#0A1216,#101D24);
+  border:1px solid var(--line2);border-radius:12px;overflow:hidden
+}
+.hud-top{display:flex;align-items:flex-end;justify-content:space-between;padding:14px 16px 10px;gap:12px}
+.pv{display:flex;align-items:baseline;gap:8px;min-width:0}
+.pv .n{font-size:38px;letter-spacing:-.02em;color:var(--amber);line-height:1}
+.pv .u{font-size:12px;color:var(--ink3);letter-spacing:.12em;text-transform:uppercase}
+.ma{text-align:right;flex:0 0 auto}
+.ma .n{font-size:24px;color:var(--eh);line-height:1.1}
+.ma .u{font-size:10px;color:var(--ink3);letter-spacing:.16em;text-transform:uppercase}
+.bar{height:5px;background:#0A1216;border-top:1px solid var(--line)}
+.bar i{display:block;height:100%;background:var(--eh);transition:width .12s linear}
+.bar.over i{background:var(--bad)}
+.hud-bot{display:grid;grid-template-columns:1fr 1fr 1fr;border-top:1px solid var(--line)}
+.cell{padding:10px 12px;border-right:1px solid var(--line)}
+.cell:last-child{border-right:0}
+.cell .k{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+.cell .v{font-size:16px;margin-top:3px;color:var(--ink)}
+.cell .v.sm{font-size:14px}
+.cell .mm{font-size:10.5px;color:var(--ink3);margin-top:1px}
+
+/* ---------- desenho ---------- */
+.draw{margin-top:16px;background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:6px}
+svg{display:block;width:100%;height:auto}
+
+/* ---------- controles ---------- */
+.ctl{margin-top:14px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 13px}
+.ctl.hide{display:none}
+.ctl .top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:9px}
+.ctl label{font-size:12.5px;color:var(--ink2);letter-spacing:.01em}
+.ctl .hint{font-size:11px;color:var(--ink3);margin-top:7px;line-height:1.4}
+.numbox{
+  width:78px;background:#0A1216;border:1px solid var(--line2);border-radius:6px;
+  color:var(--ink);padding:9px 7px;font-size:14.5px;text-align:right;
+  font-family:ui-monospace,"SF Mono",Menlo,monospace;font-variant-numeric:tabular-nums
+}
+.numbox.wide{width:104px}
+.numbox.amber{color:var(--amber)}
+.numbox:focus{outline:0;border-color:var(--amber)}
+.unitmm{font-size:10.5px;color:var(--ink3);margin-left:5px;letter-spacing:.08em}
+input[type=range]{
+  -webkit-appearance:none;appearance:none;width:100%;height:44px;background:transparent;margin:0
+}
+input[type=range]::-webkit-slider-runnable-track{height:3px;background:var(--line2);border-radius:2px}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:24px;height:24px;border-radius:50%;background:var(--amber);
+  border:3px solid var(--bg);margin-top:-10.5px;box-shadow:0 1px 4px rgba(0,0,0,.6)
+}
+input[type=range]::-moz-range-track{height:3px;background:var(--line2);border-radius:2px}
+input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--amber);border:3px solid var(--bg)}
+
+.dens{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.dens .f{display:flex;flex-direction:column;gap:5px}
+.dens .f > span{font-size:11px;color:var(--ink3);letter-spacing:.05em}
+.dens input{
+  background:#0A1216;border:1px solid var(--line2);border-radius:6px;color:var(--ink);
+  padding:7px 8px;font-size:15px;width:100%;
+  font-family:ui-monospace,"SF Mono",Menlo,monospace;font-variant-numeric:tabular-nums
+}
+.dens input:focus{outline:0;border-color:var(--amber)}
+.presets{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
+.presets button{
+  background:#0A1216;border:1px solid var(--line);color:var(--ink2);border-radius:6px;
+  padding:9px 12px;font-size:11.5px;cursor:pointer
+}
+.presets button:active{border-color:var(--amber);color:var(--amber)}
+
+/* ---------- conferência ---------- */
+.check{margin-top:14px;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.check .hd{
+  background:var(--panel);padding:11px 13px;display:flex;justify-content:space-between;
+  align-items:center;gap:10px;border-bottom:1px solid var(--line)
+}
+.check .hd span:first-child{font-size:12.5px;color:var(--ink2)}
+.check .bd{padding:12px 13px;background:var(--panel2)}
+.row{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:5px 0}
+.row .k{font-size:12px;color:var(--ink3)}
+.row .v{font-size:14.5px}
+.cond2{display:flex;gap:6px;margin-bottom:11px}
+.cbtn{
+  flex:1;background:#0A1216;border:1px solid var(--line);color:var(--ink3);border-radius:7px;
+  padding:12px 8px;font-size:11px;line-height:1.3;cursor:pointer
+}
+.cbtn.on{border-color:var(--eh);color:var(--eh);background:#0D2430}
+.verdict{
+  margin-top:10px;padding:10px 12px;border-radius:8px;font-size:13px;line-height:1.45;
+  border:1px solid var(--line2);background:#0A1216
+}
+.verdict.ok{border-color:#1E5C42;background:#0A1D16;color:var(--ok)}
+.verdict.bad{border-color:#5C2A24;background:#1D0E0C;color:var(--bad)}
+.solve{
+  margin-top:10px;width:100%;background:#0A1216;border:1px solid var(--line2);color:var(--amber);
+  border-radius:8px;padding:11px;font-size:13.5px;cursor:pointer;letter-spacing:.02em
+}
+.solve:active{background:#151F0A}
+
+/* ---------- salvar ---------- */
+.save{
+  margin-top:20px;display:flex;gap:8px
+}
+.save button{
+  flex:1;border-radius:9px;padding:13px;font-size:14px;cursor:pointer;letter-spacing:.02em;
+  background:var(--amber);border:0;color:#1A1204;font-weight:600
+}
+.save button.ghost{background:transparent;border:1px solid var(--line2);color:var(--ink2);font-weight:400}
+.note{margin-top:14px;font-size:11.5px;color:var(--ink3);line-height:1.5}
+
+.toast{
+  position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);opacity:0;
+  background:var(--panel);border:1px solid var(--line2);color:var(--ink);
+  padding:11px 18px;border-radius:999px;font-size:13px;pointer-events:none;
+  transition:opacity .2s,transform .2s;z-index:9
+}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">
+    <span>Régua de nível · pressão diferencial</span>
+    <span class="mono" id="ehead">FMD72</span>
+  </div>
+  <div class="tagline">
+    <input type="text" class="tagbox" id="tagName" value="LT-971016" aria-label="Tag do instrumento" spellcheck="false">
+  </div>
+  <div class="saved" id="saved"></div>
+</header>
+
+<section class="sect">
+  <h2>Arranjo de medição</h2>
+  <div class="arrs" id="arrs"></div>
+</section>
+
+<div class="hud">
+  <div class="hud-top">
+    <div class="pv"><span class="n mono" id="hPV">0</span><span class="u">mmH₂O</span></div>
+    <div class="ma"><div class="n mono" id="hMA">4,00</div><div class="u">mA · <span id="hPC">0</span>%</div></div>
+  </div>
+  <div class="bar" id="hBar"><i style="width:0%"></i></div>
+  <div class="hud-bot">
+    <div class="cell"><div class="k">LRV · 0%</div><div class="v mono" id="hLRV">0</div><div class="mm mono" id="hLRVmm"></div></div>
+    <div class="cell"><div class="k">URV · 100%</div><div class="v mono" id="hURV">0</div><div class="mm mono" id="hURVmm"></div></div>
+    <div class="cell"><div class="k">Span</div><div class="v mono" id="hSPN">0</div><div class="mm mono" id="hSPNmm"></div></div>
+  </div>
+</div>
+
+<div class="draw"><svg id="svg" viewBox="0 0 700 460" role="img" aria-label="Desenho do arranjo de medição"></svg></div>
+
+<!-- ==================== controles ==================== -->
+
+<div class="ctl" data-f="nivel">
+  <div class="top"><label for="lvl">Nível de produto</label>
+    <span><input type="number" class="numbox" id="oLvl" value="0" min="0" step="1" aria-label="Nível em milímetros"><span class="unitmm">mm</span></span></div>
+  <input type="range" id="lvl" min="0" max="900" step="1" value="0" aria-label="Nível de produto">
+</div>
+
+<div class="ctl" data-f="vaso">
+  <div class="top"><label for="vas">Altura do vaso</label>
+    <span><input type="number" class="numbox amber" id="oVas" value="900" min="100" max="6000" step="1" aria-label="Altura do vaso"><span class="unitmm">mm</span></span></div>
+  <input type="range" id="vas" min="100" max="4000" step="1" value="900" aria-label="Altura do vaso">
+</div>
+
+<div class="ctl" data-f="inf">
+  <div class="top"><label for="inf" id="lblInf">Tomada de alta abaixo do fundo</label>
+    <span><input type="number" class="numbox amber" id="oInf" value="400" min="0" max="3000" step="1" aria-label="Tomada de alta"><span class="unitmm">mm</span></span></div>
+  <input type="range" id="inf" min="0" max="2000" step="1" value="400" aria-label="Tomada de alta abaixo do fundo">
+  <div class="hint" id="hintInf"></div>
+</div>
+
+<div class="ctl" data-f="sup">
+  <div class="top"><label for="sup" id="lblSup">Tomada de baixa acima do topo</label>
+    <span><input type="number" class="numbox amber" id="oSup" value="400" min="0" max="3000" step="1" aria-label="Tomada de baixa"><span class="unitmm">mm</span></span></div>
+  <input type="range" id="sup" min="0" max="2000" step="1" value="400" aria-label="Tomada de baixa acima do topo">
+</div>
+
+<div class="ctl" data-f="alt">
+  <div class="top"><label for="alt" id="lblAlt">Altura do transmissor</label>
+    <span><input type="number" class="numbox" id="oAlt" value="700" min="-3000" max="4000" step="1" aria-label="Altura do transmissor"><span class="unitmm">mm</span></span></div>
+  <input type="range" id="alt" min="-1500" max="3000" step="1" value="700" aria-label="Altura do transmissor">
+  <div class="hint" id="hintAlt"></div>
+</div>
+
+<div class="ctl" data-f="pote">
+  <div class="top"><label for="pot">Pote de selagem acima do topo</label>
+    <span><input type="number" class="numbox amber" id="oPot" value="300" min="0" max="3000" step="1" aria-label="Altura do pote"><span class="unitmm">mm</span></span></div>
+  <input type="range" id="pot" min="0" max="2000" step="1" value="300" aria-label="Altura do pote de selagem">
+  <div class="hint">A cota de referência do zero é o furo lateral do pote, onde o líquido se autonivela.</div>
+</div>
+
+<div class="ctl" data-f="span">
+  <div class="top"><label for="spn" id="lblSpan">Span · 0 a 100%</label>
+    <span><input type="number" class="numbox amber" id="oSpn" value="850" min="10" max="6000" step="1" aria-label="Span em milímetros"><span class="unitmm">mm</span></span></div>
+  <input type="range" id="spn" min="10" max="4000" step="1" value="850" aria-label="Span em milímetros">
+</div>
+
+<div class="ctl" data-f="dens">
+  <div class="dens">
+    <label class="f" data-d="prod"><span>Densidade do produto</span>
+      <input type="number" id="dProd" value="0.547" min="0.05" max="3" step="0.001" aria-label="Densidade do produto"></label>
+    <label class="f" data-d="fill"><span>Densidade do capilar</span>
+      <input type="number" id="dFill" value="0.8256" min="0.05" max="3" step="0.0001" aria-label="Densidade do fluido de enchimento"></label>
+    <label class="f" data-d="sel"><span>Densidade do líq. de selagem</span>
+      <input type="number" id="dSel" value="1.0" min="0.05" max="3" step="0.001" aria-label="Densidade do líquido de selagem"></label>
+    <label class="f" data-d="leve"><span>Densidade do líquido leve</span>
+      <input type="number" id="dLeve" value="0.70" min="0.05" max="3" step="0.001" aria-label="Densidade do líquido leve"></label>
+    <label class="f" data-d="pes"><span>Densidade do líquido pesado</span>
+      <input type="number" id="dPes" value="1.00" min="0.05" max="3" step="0.001" aria-label="Densidade do líquido pesado"></label>
+  </div>
+  <div class="presets" id="presFill">
+    <button type="button" data-d="0.8256">deduzida 0,8256</button>
+    <button type="button" data-d="0.85">syltherm 0,85</button>
+    <button type="button" data-d="0.934">silicone 0,934</button>
+    <button type="button" data-d="1.004">água-glicol 1,004</button>
+  </div>
+</div>
+
+<div class="check" data-f="med">
+  <div class="hd">
+    <span>Medição de campo · vaso vazio</span>
+    <span><input type="number" class="numbox wide" id="med" value="-1403.6" step="0.1" aria-label="Delta P lido no programador"><span class="unitmm">mmH₂O</span></span>
+  </div>
+  <div class="bd">
+    <div class="cond2">
+      <button type="button" class="cbtn on" data-c="seco">Selos secos · tomadas bloqueadas</button>
+      <button type="button" class="cbtn" data-c="oper">Vaso vazio · em operação</button>
+    </div>
+    <div class="row"><span class="k">Elevação · coluna do capilar</span><span class="v mono" id="cElev">—</span></div>
+    <div class="row"><span class="k">Supressão · perna alagada</span><span class="v mono" id="cSupr">—</span></div>
+    <div class="row"><span class="k" id="kCalc">Calculado pela geometria</span><span class="v mono" id="cCalc">—</span></div>
+    <div class="row"><span class="k">Diferença</span><span class="v mono" id="cDif">—</span></div>
+    <div class="row" id="rowCol"><span class="k">Coluna implícita da medição</span><span class="v mono" id="cCol">—</span></div>
+    <div class="row" id="rowGeo"><span class="k">Separação geométrica digitada</span><span class="v mono" id="cGeo">—</span></div>
+    <div class="verdict" id="cVerd">—</div>
+    <button type="button" class="solve" id="btnSolve">Usar a densidade que fecha a conta</button>
+  </div>
+</div>
+
+<div class="save">
+  <button type="button" id="btnSave">Salvar este vaso</button>
+  <button type="button" class="ghost" id="btnNew">Novo</button>
+</div>
+
+<p class="note">Os valores ficam salvos neste aparelho. O que o transmissor indicar em campo prevalece sobre o cálculo — a conta serve para conferir se o número faz sentido.</p>
+
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+"use strict";
+var $ = function(id){ return document.getElementById(id); };
+
+/* ---------------- armazenamento ---------------- */
+var mem = {};
+var store = {
+  get:function(k){ try{ return localStorage.getItem(k); }catch(e){ return mem[k]||null; } },
+  set:function(k,v){ try{ localStorage.setItem(k,v); }catch(e){ mem[k]=v; } }
+};
+
+/* ---------------- arranjos ---------------- */
+var ARR = {
+  direto:{
+    nome:"Direto · lado de baixa aberto",
+    sub:"Tanque atmosférico, sem capilar",
+    campos:["nivel","vaso","inf","alt","span","dens","med"],
+    dens:["prod"],
+    lblInf:"Tomada de alta abaixo do fundo",
+    lblAlt:"Transmissor abaixo da tomada de alta",
+    hintAlt:"Sem capilar do outro lado, descer o transmissor alaga mais perna e soma pressão.",
+    hintInf:"O trecho entre o bocal e o fundo fica sempre cheio de produto: é a supressão.",
+    desenho:{lp:"aberto",hp:"direto",camara:false},
+    altBaixo:true
+  },
+  camara:{
+    nome:"Câmara externa",
+    sub:"Tubo lateral com as duas tomadas",
+    campos:["nivel","vaso","inf","alt","span","dens","med"],
+    dens:["prod"],
+    lblInf:"Tomada de alta abaixo do fundo",
+    lblAlt:"Transmissor abaixo da tomada de alta",
+    hintAlt:"A câmara replica o nível do vaso; a conta é a mesma da medição direta.",
+    hintInf:"O trecho entre o bocal e o fundo fica sempre cheio de produto: é a supressão.",
+    desenho:{lp:"aberto",hp:"direto",camara:true},
+    altBaixo:true
+  },
+  remoto:{
+    nome:"Dois selos remotos",
+    sub:"Capilar nos dois lados",
+    campos:["nivel","vaso","inf","sup","alt","span","dens","med"],
+    dens:["prod","fill"],
+    lblInf:"Selo de alta abaixo do fundo",
+    lblSup:"Selo de baixa acima do topo",
+    lblAlt:"Altura do transmissor",
+    hintAlt:"Os dois capilares sobem juntos: mexer na altura não altera o zero. Arraste e confira.",
+    hintInf:"Os bocais costumam ser simétricos — sobem e descem junto.",
+    desenho:{lp:"capilar",hp:"capilar",camara:false},
+    simetrico:true
+  },
+  capilarLP:{
+    nome:"Selo direto na alta, capilar na baixa",
+    sub:"Transmissor flangeado no bocal",
+    campos:["nivel","vaso","inf","sup","alt","span","dens","med"],
+    dens:["prod","fill"],
+    lblInf:"Selo de alta abaixo do fundo",
+    lblSup:"Selo de baixa acima do topo",
+    lblAlt:"Altura do transmissor",
+    hintAlt:"Aqui a altura importa: só o lado de baixa tem coluna de capilar, não tem o que compensar.",
+    hintInf:"O selo está flangeado no bocal, então esse trecho de produto entra como supressão.",
+    desenho:{lp:"capilar",hp:"direto",camara:false}
+  },
+  pernaumida:{
+    nome:"Perna úmida com pote",
+    sub:"Vapor condensável, pote de selagem",
+    campos:["nivel","vaso","inf","pote","alt","span","dens","med"],
+    dens:["prod","sel"],
+    lblInf:"Tomada de alta abaixo do fundo",
+    lblAlt:"Transmissor abaixo da tomada de alta",
+    hintAlt:"A perna de alta abaixo da tomada soma produto; a perna de baixa continua cheia de selagem.",
+    hintInf:"O trecho entre o bocal e o fundo fica sempre cheio de produto: é a supressão.",
+    desenho:{lp:"pote",hp:"direto",camara:false},
+    altBaixo:true
+  },
+  interface:{
+    nome:"Interface entre dois líquidos",
+    sub:"Faixa medida entre as tomadas",
+    campos:["nivel","vaso","inf","alt","span","dens","med"],
+    dens:["leve","pes"],
+    lblInf:"Tomada de alta abaixo do fundo",
+    lblAlt:"Transmissor abaixo da tomada de alta",
+    lblSpan:"Faixa medida · 0 a 100%",
+    hintAlt:"Abaixo da tomada de alta a perna fica cheia do líquido pesado.",
+    hintInf:"Trecho sempre alagado, entra como supressão com a densidade do pesado.",
+    desenho:{lp:"aberto",hp:"direto",camara:false},
+    altBaixo:true, iface:true
+  }
+};
+var ordem = ["direto","camara","remoto","capilarLP","pernaumida","interface"];
+var atual = "remoto";
+
+/* ---------------- pares slider + caixa ---------------- */
+var PARES = [["lvl","oLvl"],["vas","oVas"],["inf","oInf"],["sup","oSup"],
+             ["alt","oAlt"],["pot","oPot"],["spn","oSpn"]];
+var cond = "seco";
+
+/* densidade de enchimento que reproduziria a medição */
+function densQueFecha(r, medido){
+  if(!r.sep) return NaN;
+  var col = (cond === "seco") ? medido : (medido - r.supr);
+  return Math.abs(col) / r.sep;
+}
+
+function num(id){ var v = parseFloat($(id).value); return isFinite(v) ? v : 0; }
+function dens(id,fb){ var v = parseFloat($(id).value); return (isFinite(v)&&v>0) ? v : fb; }
+function br(n,d){
+  if(!isFinite(n)) return "—";
+  return n.toFixed(d).replace(".",",").replace("-","\u2212");
+}
+
+/* ---------------- cálculo ---------------- */
+function calc(){
+  var A = ARR[atual];
+  var vaso = num("vas"), inf = num("inf"), sup = num("sup"),
+      alt  = num("alt"), pot = num("pot"), spn = num("spn"), nivel = num("lvl");
+  var dP = dens("dProd",1), dF = dens("dFill",1), dS = dens("dSel",1),
+      dL = dens("dLeve",1), dQ = dens("dPes",1);
+
+  var elev = 0, supr = 0, sep = 0, densMedida = dP, densCol = dF;
+
+  if(atual === "direto" || atual === "camara"){
+    supr = (inf + alt) * dP;
+  }
+  else if(atual === "remoto"){
+    sep  = vaso + inf + sup;
+    elev = -sep * dF;
+    supr = inf * dP;
+  }
+  else if(atual === "capilarLP"){
+    sep  = vaso + inf + sup;
+    elev = -(sep - alt) * dF;
+    supr = inf * dP;
+  }
+  else if(atual === "pernaumida"){
+    sep  = vaso + pot + alt;
+    elev = -sep * dS;
+    supr = (inf + alt) * dP;
+    densCol = dS;
+  }
+  else if(atual === "interface"){
+    supr = (inf + alt) * dQ + spn * dL;
+    densMedida = dQ - dL;
+  }
+
+  var LRV  = elev + supr;
+  var span = spn * densMedida;
+  var URV  = LRV + span;
+  var PV   = LRV + Math.min(nivel, spn) * densMedida;
+  var pc   = span !== 0 ? (PV - LRV) / span * 100 : 0;
+  var ma   = 4 + 16 * pc / 100;
+
+  return {A:A, vaso:vaso, inf:inf, sup:sup, alt:alt, pot:pot, spn:spn, nivel:nivel,
+          dP:dP, dF:dF, dS:dS, dL:dL, dQ:dQ,
+          elev:elev, supr:supr, sep:sep, densCol:densCol, densMedida:densMedida,
+          LRV:LRV, URV:URV, span:span, PV:PV, pc:pc, ma:ma};
+}
+
+/* ---------------- desenho ---------------- */
+function svgDraw(r){
+  var A = r.A, D = A.desenho;
+  var W = 700, H = 460;
+  var topo = r.vaso + Math.max(r.sup, r.pot, 0) + 160;
+  var base = r.inf + Math.max(r.alt < 0 ? -r.alt : (A.altBaixo ? r.alt : 0), A.altBaixo ? 0 : 0) + 160;
+  if(!A.altBaixo) base = r.inf + 160;
+  var total = topo + base;
+  var PX = Math.min(0.30, 340 / Math.max(total, 1));
+  var y0 = H - 60;                              // cota da tomada de alta
+  var Y = function(mm){ return y0 - mm * PX; }; // mm acima da tomada -> pixel
+
+  var cx = 300, wv = 118;                        // vaso
+  var xL = cx - wv/2, xR = cx + wv/2;
+  var yFundo = Y(r.inf), yTopo = Y(r.inf + r.vaso);
+  var cap = Math.min(24, wv*0.26);
+  var s = [];
+
+  s.push('<defs>'
+    + '<marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">'
+    + '<path d="M0,1 L9,5 L0,9 z" fill="#5A737E"/></marker>'
+    + '<marker id="a2" viewBox="0 0 10 10" refX="1" refY="5" markerWidth="7" markerHeight="7" orient="auto">'
+    + '<path d="M10,1 L1,5 L10,9 z" fill="#5A737E"/></marker>'
+    + '<pattern id="hatch" width="7" height="7" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">'
+    + '<line x1="0" y1="0" x2="0" y2="7" stroke="#2F9BD8" stroke-width="2.5" opacity=".35"/></pattern>'
+    + '</defs>');
+
+  // ---- câmara externa
+  var xc = xR + 78, wc = 26;
+  if(D.camara){
+    s.push('<rect x="'+(xc-wc/2)+'" y="'+(yTopo-10)+'" width="'+wc+'" height="'+(yFundo-yTopo+20)+'" rx="5" fill="#0A1216" stroke="#2E454F" stroke-width="1.6"/>');
+    s.push('<line x1="'+xR+'" y1="'+(yTopo+16)+'" x2="'+(xc-wc/2)+'" y2="'+(yTopo+16)+'" stroke="#2E454F" stroke-width="3"/>');
+    s.push('<line x1="'+xR+'" y1="'+(yFundo-16)+'" x2="'+(xc-wc/2)+'" y2="'+(yFundo-16)+'" stroke="#2E454F" stroke-width="3"/>');
+  }
+
+  // ---- corpo do vaso
+  s.push('<path d="M'+xL+','+yTopo+' L'+xL+','+yFundo
+    +' Q'+xL+','+(yFundo+cap)+' '+cx+','+(yFundo+cap)
+    +' Q'+xR+','+(yFundo+cap)+' '+xR+','+yFundo
+    +' L'+xR+','+yTopo
+    +' Q'+xR+','+(yTopo-cap)+' '+cx+','+(yTopo-cap)
+    +' Q'+xL+','+(yTopo-cap)+' '+xL+','+yTopo+' Z" fill="#0A1216" stroke="#3A5561" stroke-width="2"/>');
+
+  // ---- líquido
+  var nv = Math.min(r.nivel, r.vaso);
+  var yN = Y(r.inf + nv);
+  if(A.iface){
+    // pesado embaixo até o nível, leve acima
+    s.push('<path d="M'+xL+','+yN+' L'+xL+','+yFundo+' Q'+xL+','+(yFundo+cap)+' '+cx+','+(yFundo+cap)
+      +' Q'+xR+','+(yFundo+cap)+' '+xR+','+yFundo+' L'+xR+','+yN+' Z" fill="url(#hatch)"/>');
+    s.push('<rect x="'+xL+'" y="'+yTopo+'" width="'+wv+'" height="'+(yN-yTopo)+'" fill="#8A6A3A" opacity=".28"/>');
+    s.push('<line x1="'+xL+'" y1="'+yN+'" x2="'+xR+'" y2="'+yN+'" stroke="#FFB020" stroke-width="2.5"/>');
+    s.push('<text x="'+(xL+8)+'" y="'+(yTopo+18)+'" fill="#B79A6B" font-size="10" font-family="ui-monospace,Menlo,monospace">leve</text>');
+  } else if(nv > 0){
+    s.push('<path d="M'+xL+','+yN+' L'+xL+','+yFundo+' Q'+xL+','+(yFundo+cap)+' '+cx+','+(yFundo+cap)
+      +' Q'+xR+','+(yFundo+cap)+' '+xR+','+yFundo+' L'+xR+','+yN+' Z" fill="url(#hatch)"/>');
+    s.push('<line x1="'+xL+'" y1="'+yN+'" x2="'+xR+'" y2="'+yN+'" stroke="#2F9BD8" stroke-width="2.5"/>');
+    if(D.camara) s.push('<rect x="'+(xc-wc/2+2)+'" y="'+yN+'" width="'+(wc-4)+'" height="'+(yFundo-yN-14)+'" fill="url(#hatch)"/>');
+  }
+
+  // ---- transmissor
+  var yT = Y(A.altBaixo ? -r.alt : r.alt);
+  var xT = cx - 205, wT = 54, hT = 30;
+  s.push('<rect x="'+(xT-wT/2)+'" y="'+(yT-hT/2)+'" width="'+wT+'" height="'+hT+'" rx="6" fill="#134963" stroke="#2F9BD8" stroke-width="1.8"/>');
+  s.push('<circle cx="'+xT+'" cy="'+yT+'" r="7.5" fill="none" stroke="#7CC4E8" stroke-width="1.4"/>');
+  s.push('<text x="'+xT+'" y="'+(yT+hT/2+14)+'" fill="#718E97" font-size="9.5" text-anchor="middle" letter-spacing="1.4" font-family="ui-monospace,Menlo,monospace">TRANSMISSOR</text>');
+
+  var xHPin = D.camara ? (xc + wc/2) : xR;
+  var xTapH = xL, xTapL = xL;
+
+  // ---- lado de alta
+  var yHP = D.camara ? yFundo - 16 : Y(0);
+  if(D.hp === "capilar"){
+    s.push('<line x1="'+xTapH+'" y1="'+yHP+'" x2="'+(xT+26)+'" y2="'+yHP+'" stroke="#3A5561" stroke-width="2.5"/>');
+    s.push('<path d="M'+(xT+26)+','+yHP+' Q'+(xT+14)+','+yHP+' '+(xT+14)+','+(yT+9)+' L'+(xT+wT/2)+','+(yT+9)+'" fill="none" stroke="#5A737E" stroke-width="2.5"/>');
+    s.push(flange(xTapH, yHP, -1));
+  } else {
+    s.push('<path d="M'+xTapH+','+yHP+' L'+(xT+20)+','+yHP+' L'+(xT+20)+','+(yT+9)+' L'+(xT+wT/2)+','+(yT+9)+'" fill="none" stroke="#3A5561" stroke-width="2.5"/>');
+    s.push(flange(xTapH, yHP, -1));
+  }
+  s.push('<text x="'+(xTapH-14)+'" y="'+(yHP-7)+'" fill="#FFB020" font-size="10" text-anchor="end" font-family="ui-monospace,Menlo,monospace">ALTA</text>');
+
+  // ---- lado de baixa
+  var yLP;
+  if(D.lp === "aberto"){
+    yLP = yT - 4;
+    s.push('<line x1="'+(xT-wT/2)+'" y1="'+yLP+'" x2="'+(xT-42)+'" y2="'+yLP+'" stroke="#3A5561" stroke-width="2.5"/>');
+    s.push('<path d="M'+(xT-42)+','+yLP+' l-6,-5 M'+(xT-42)+','+yLP+' l-6,5" stroke="#5A737E" stroke-width="2" fill="none"/>');
+    s.push('<text x="'+(xT-50)+'" y="'+(yLP-8)+'" fill="#718E97" font-size="9.5" text-anchor="end" font-family="ui-monospace,Menlo,monospace">ATMOSFERA</text>');
+  } else if(D.lp === "capilar"){
+    yLP = Y(r.inf + r.vaso + r.sup);
+    s.push('<line x1="'+xTapL+'" y1="'+yLP+'" x2="'+(xT-4)+'" y2="'+yLP+'" stroke="#3A5561" stroke-width="2.5"/>');
+    s.push('<path d="M'+(xT-4)+','+yLP+' Q'+(xT-30)+','+yLP+' '+(xT-30)+','+(yT-9)+' L'+(xT-wT/2)+','+(yT-9)+'" fill="none" stroke="#5A737E" stroke-width="2.5"/>');
+    s.push(flange(xTapL, yLP, -1));
+    s.push('<text x="'+(xTapL-14)+'" y="'+(yLP-7)+'" fill="#7CC4E8" font-size="10" text-anchor="end" font-family="ui-monospace,Menlo,monospace">BAIXA</text>');
+  } else if(D.lp === "pote"){
+    yLP = Y(r.inf + r.vaso + r.pot);
+    var xp = xT - 6;
+    s.push('<line x1="'+xTapL+'" y1="'+yLP+'" x2="'+xp+'" y2="'+yLP+'" stroke="#3A5561" stroke-width="2.5"/>');
+    s.push('<rect x="'+(xp-19)+'" y="'+(yLP-15)+'" width="38" height="34" rx="6" fill="#0A1216" stroke="#3A5561" stroke-width="1.8"/>');
+    s.push('<rect x="'+(xp-17)+'" y="'+(yLP-1)+'" width="34" height="18" rx="4" fill="#2F9BD8" opacity=".3"/>');
+    s.push('<line x1="'+(xp-19)+'" y1="'+yLP+'" x2="'+(xp-27)+'" y2="'+yLP+'" stroke="#FFB020" stroke-width="2"/>');
+    s.push('<line x1="'+xp+'" y1="'+(yLP+19)+'" x2="'+xp+'" y2="'+(yT-9)+'" stroke="#5A737E" stroke-width="2.5"/>');
+    s.push('<line x1="'+xp+'" y1="'+(yT-9)+'" x2="'+(xT-wT/2)+'" y2="'+(yT-9)+'" stroke="#5A737E" stroke-width="2.5"/>');
+    s.push('<text x="'+(xp-31)+'" y="'+(yLP+4)+'" fill="#FFB020" font-size="9.5" text-anchor="end" font-family="ui-monospace,Menlo,monospace">0%</text>');
+    s.push('<text x="'+(xTapL-14)+'" y="'+(yLP-19)+'" fill="#7CC4E8" font-size="10" text-anchor="end" font-family="ui-monospace,Menlo,monospace">BAIXA</text>');
+  }
+
+  // ---- cotas
+  function cota(x, y1, y2, txt, lado){
+    if(Math.abs(y1-y2) < 13) return "";
+    var o = [];
+    o.push('<line x1="'+x+'" y1="'+y1+'" x2="'+x+'" y2="'+y2+'" stroke="#5A737E" stroke-width="1" marker-start="url(#a2)" marker-end="url(#a1)"/>');
+    o.push('<line x1="'+(x-5)+'" y1="'+y1+'" x2="'+(x+5)+'" y2="'+y1+'" stroke="#3A5561" stroke-width="1"/>');
+    o.push('<line x1="'+(x-5)+'" y1="'+y2+'" x2="'+(x+5)+'" y2="'+y2+'" stroke="#3A5561" stroke-width="1"/>');
+    var ym = (y1+y2)/2;
+    o.push('<text x="'+(x + (lado<0?-9:9))+'" y="'+(ym+3.5)+'" fill="#8AA2AC" font-size="10.5" text-anchor="'+(lado<0?"end":"start")+'" font-family="ui-monospace,Menlo,monospace">'+txt+'</text>');
+    return o.join("");
+  }
+  var xd = D.camara ? xc + wc/2 + 46 : xR + 46;
+  s.push(cota(xd, yFundo, yTopo, r.vaso+" vaso", 1));
+  if(r.inf > 0) s.push(cota(xd, Y(0), yFundo, r.inf+"", 1));
+  if((D.lp === "capilar") && r.sup > 0) s.push(cota(xd, yTopo, yLP, r.sup+"", 1));
+  if(D.hp === "capilar" || D.lp === "capilar"){
+    s.push(cota(xd + 62, Y(0), yLP, "sep "+Math.round(r.sep), 1));
+  }
+  if(r.spn > 0){
+    var ySpanTop = Y(r.inf + Math.min(r.spn, r.vaso));
+    s.push(cota(xL - 34, yFundo, ySpanTop, "span "+r.spn, -1));
+  }
+
+  return s.join("");
+}
+function flange(x, y, dir){
+  return '<rect x="'+(x + (dir<0 ? -7 : 0))+'" y="'+(y-9)+'" width="7" height="18" fill="#3A5561"/>';
+}
+
+/* ---------------- render ---------------- */
+function render(){
+  var r = calc(), A = r.A;
+
+  // display
+  $("hPV").textContent  = br(r.PV, 1);
+  $("hLRV").textContent = br(r.LRV, 1);
+  $("hURV").textContent = br(r.URV, 1);
+  $("hSPN").textContent = br(r.span, 1);
+  $("hLRVmm").textContent = r.densCol ? br(r.LRV / r.densMedida, 0)+" mm" : "";
+  $("hURVmm").textContent = r.densMedida ? br(r.URV / r.densMedida, 0)+" mm" : "";
+  $("hSPNmm").textContent = r.spn + " mm";
+  $("hMA").textContent  = br(Math.max(3.8, Math.min(20.5, r.ma)), 2);
+  $("hPC").textContent  = br(r.pc, 0);
+  var w = Math.max(0, Math.min(100, r.pc));
+  $("hBar").firstElementChild.style.width = w + "%";
+  $("hBar").classList.toggle("over", r.pc > 100 || r.pc < 0);
+
+  // desenho
+  $("svg").innerHTML = svgDraw(r);
+
+  // conferência
+  var medido = parseFloat($("med").value);
+  var alvo = (cond === "seco") ? r.elev : r.LRV;
+  var dif = medido - alvo;
+  $("cElev").textContent = br(r.elev, 1) + " mmH₂O";
+  $("cSupr").textContent = "+" + br(r.supr, 1) + " mmH₂O";
+  $("kCalc").textContent = (cond === "seco")
+    ? "Esperado só com o capilar" : "Esperado com a perna alagada · LRV";
+  $("cCalc").textContent = br(alvo, 1) + " mmH₂O";
+  $("cDif").textContent  = br(dif, 1) + " mmH₂O";
+  var temCol = (r.sep > 0);
+  $("rowCol").style.display = temCol ? "" : "none";
+  $("rowGeo").style.display = temCol ? "" : "none";
+  if(temCol){
+    $("cCol").textContent = br(Math.abs(medido) / r.densCol, 0) + " mm";
+    $("cGeo").textContent = br(r.sep, 0) + " mm";
+  }
+  var v = $("cVerd");
+  v.className = "verdict" + (Math.abs(dif) < 2 ? " ok" : (Math.abs(dif) < 25 ? "" : " bad"));
+  if(Math.abs(dif) < 2){
+    v.textContent = "Fecha. A geometria e a densidade digitadas reproduzem a medição de campo.";
+  } else if(temCol){
+    var dNec = densQueFecha(r, medido);
+    v.textContent = "Não fecha por " + br(dif,1) + " mmH₂O. Com essa separação, a densidade que fecharia é "
+      + br(dNec,4) + (dNec < 0.6 || dNec > 1.3 ? " — valor fora do que existe em fluido de selo, confira a medição." : ".");
+  } else {
+    v.textContent = "Não fecha por " + br(dif,1) + " mmH₂O. Confira a cota da tomada e a densidade do produto.";
+  }
+  $("btnSolve").style.display = temCol ? "" : "none";
+
+  // texto dos rótulos
+  if(A.lblInf)  $("lblInf").textContent  = A.lblInf;
+  if(A.lblSup)  $("lblSup").textContent  = A.lblSup;
+  if(A.lblAlt)  $("lblAlt").textContent  = A.lblAlt;
+  $("lblSpan").textContent = A.lblSpan || "Span · 0 a 100%";
+  $("hintAlt").textContent = A.hintAlt || "";
+  $("hintInf").textContent = A.hintInf || "";
+}
+
+/* ---------------- visibilidade por arranjo ---------------- */
+function aplicaArranjo(){
+  var A = ARR[atual];
+  Array.prototype.forEach.call(document.querySelectorAll("[data-f]"), function(el){
+    el.style.display = A.campos.indexOf(el.dataset.f) >= 0 ? "" : "none";
+  });
+  Array.prototype.forEach.call(document.querySelectorAll("[data-d]"), function(el){
+    if(el.tagName === "LABEL") el.style.display = A.dens.indexOf(el.dataset.d) >= 0 ? "" : "none";
+  });
+  $("presFill").style.display = (A.dens.indexOf("fill") >= 0) ? "" : "none";
+  var alt = $("alt");
+  if(A.altBaixo){ alt.min = 0; if(+alt.value < 0){ alt.value = 0; $("oAlt").value = 0; } }
+  else { alt.min = -1500; }
+  Array.prototype.forEach.call(document.querySelectorAll(".arr"), function(b){
+    b.classList.toggle("on", b.dataset.k === atual);
+  });
+  render();
+}
+
+/* ---------------- vasos salvos ---------------- */
+var CAMPOS = ["vas","inf","sup","alt","pot","spn","lvl"];
+var DENSF  = ["dProd","dFill","dSel","dLeve","dPes"];
+
+function snapshot(){
+  var o = {tag:$("tagName").value, arr:atual, med:$("med").value};
+  CAMPOS.forEach(function(k){ o[k] = $(k).value; });
+  DENSF.forEach(function(k){ o[k] = $(k).value; });
+  return o;
+}
+function aplicar(o){
+  $("tagName").value = o.tag || "";
+  atual = ARR[o.arr] ? o.arr : "remoto";
+  CAMPOS.forEach(function(k){ if(o[k] !== undefined){ $(k).value = o[k]; $("o"+cap(k)).value = o[k]; } });
+  DENSF.forEach(function(k){ if(o[k] !== undefined) $(k).value = o[k]; });
+  if(o.med !== undefined) $("med").value = o.med;
+  aplicaArranjo();
+}
+function cap(k){ return k.charAt(0).toUpperCase() + k.slice(1); }
+
+function lista(){ try{ return JSON.parse(store.get("vasos") || "[]"); }catch(e){ return []; } }
+function grava(v){ store.set("vasos", JSON.stringify(v)); }
+
+function pintaSalvos(){
+  var v = lista(), box = $("saved");
+  box.innerHTML = "";
+  v.forEach(function(o, i){
+    var b = document.createElement("button");
+    b.type = "button";
+    b.className = "chip" + (o.tag === $("tagName").value ? " on" : "");
+    b.innerHTML = '<span>' + esc(o.tag) + '</span><span class="x" aria-label="Remover">×</span>';
+    b.addEventListener("click", function(ev){
+      if(ev.target.classList.contains("x")){
+        if(confirm("Remover " + o.tag + " da lista?")){
+          var L = lista(); L.splice(i,1); grava(L); pintaSalvos();
+        }
+      } else { aplicar(o); pintaSalvos(); }
+    });
+    box.appendChild(b);
+  });
+  if(!v.length){
+    var e = document.createElement("span");
+    e.className = "chip add";
+    e.textContent = "Nenhum vaso salvo ainda";
+    box.appendChild(e);
+  }
+}
+function esc(s){ return String(s).replace(/[<>&]/g, function(c){ return {"<":"&lt;",">":"&gt;","&":"&amp;"}[c]; }); }
+
+function toast(t){
+  var el = $("toast");
+  el.textContent = t; el.classList.add("on");
+  clearTimeout(el._t); el._t = setTimeout(function(){ el.classList.remove("on"); }, 1900);
+}
+
+/* ---------------- montagem ---------------- */
+ordem.forEach(function(k){
+  var A = ARR[k];
+  var b = document.createElement("button");
+  b.type = "button"; b.className = "arr"; b.dataset.k = k;
+  b.innerHTML = "<b>" + A.nome + "</b><span>" + A.sub + "</span>";
+  b.addEventListener("click", function(){ atual = k; aplicaArranjo(); });
+  $("arrs").appendChild(b);
+});
+
+PARES.forEach(function(p){
+  var sl = $(p[0]), bx = $(p[1]);
+  sl.addEventListener("input", function(){ bx.value = sl.value; sincroniza(p[0]); render(); });
+  bx.addEventListener("input", function(){
+    var v = parseFloat(bx.value);
+    if(isFinite(v)){
+      if(v > +sl.max) sl.max = Math.ceil(v * 1.2);
+      if(v < +sl.min) sl.min = Math.floor(v * 1.2);
+      sl.value = v;
+    }
+    sincroniza(p[0]); render();
+  });
+});
+
+function sincroniza(k){
+  var A = ARR[atual];
+  // bocais simétricos no arranjo de dois selos
+  if(A.simetrico){
+    if(k === "inf"){ $("sup").value = $("inf").value; $("oSup").value = $("inf").value; }
+    if(k === "sup"){ $("inf").value = $("sup").value; $("oInf").value = $("sup").value; }
+  }
+  // nível não passa do vaso; span não passa do vaso
+  var vaso = num("vas");
+  $("lvl").max = vaso; if(num("lvl") > vaso){ $("lvl").value = vaso; $("oLvl").value = vaso; }
+}
+
+DENSF.forEach(function(k){ $(k).addEventListener("input", render); });
+$("med").addEventListener("input", render);
+$("tagName").addEventListener("input", function(){ document.title = $("tagName").value + " · Régua de nível"; });
+
+Array.prototype.forEach.call($("presFill").querySelectorAll("button"), function(b){
+  b.addEventListener("click", function(){ $("dFill").value = b.dataset.d; render(); });
+});
+
+Array.prototype.forEach.call(document.querySelectorAll(".cbtn"), function(b){
+  b.addEventListener("click", function(){
+    cond = b.dataset.c;
+    Array.prototype.forEach.call(document.querySelectorAll(".cbtn"), function(x){
+      x.classList.toggle("on", x.dataset.c === cond);
+    });
+    render();
+  });
+});
+
+$("btnSolve").addEventListener("click", function(){
+  var r = calc();
+  if(!r.sep) return;
+  var d = densQueFecha(r, parseFloat($("med").value));
+  if(isFinite(d) && d > 0){
+    $(atual === "pernaumida" ? "dSel" : "dFill").value = d.toFixed(4);
+    render(); toast("Densidade ajustada para " + d.toFixed(4).replace(".", ","));
+  }
+});
+
+$("btnSave").addEventListener("click", function(){
+  var tag = $("tagName").value.trim();
+  if(!tag){ toast("Dê um nome à tag antes de salvar"); $("tagName").focus(); return; }
+  var L = lista(), o = snapshot();
+  var i = L.findIndex(function(x){ return x.tag === tag; });
+  if(i >= 0) L[i] = o; else L.push(o);
+  grava(L); pintaSalvos(); toast(i >= 0 ? tag + " atualizado" : tag + " salvo");
+});
+
+$("btnNew").addEventListener("click", function(){
+  $("tagName").value = ""; pintaSalvos(); $("tagName").focus();
+});
+
+pintaSalvos();
+aplicaArranjo();
+
+if("serviceWorker" in navigator){
+  window.addEventListener("load", function(){
+    navigator.serviceWorker.register("sw.js").catch(function(){});
+  });
+}
+})();
+</script>
+</body>
+</html>

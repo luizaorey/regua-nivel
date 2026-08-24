@@ -1,0 +1,17 @@
+{
+  "name": "Régua de Nível · Pressão Diferencial",
+  "short_name": "Régua de Nível",
+  "description": "Cálculo de LRV, URV e span para transmissores de nível por pressão diferencial.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0C1418",
+  "theme_color": "#0C1418",
+  "lang": "pt-BR",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
