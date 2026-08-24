@@ -3,334 +3,108 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0C1418">
+<meta name="theme-color" content="#07111b">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Régua de Nível">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
-<title>Régua de Nível · Transmissores de pressão diferencial</title>
+<title>Régua de Nível V2.8 · Supervisório DP v2</title>
 <style>
 :root{
-  --bg:#0C1418;
-  --panel:#132027;
-  --panel2:#0F1B21;
-  --line:#22343D;
-  --line2:#2E454F;
-  --ink:#DEE9ED;
-  --ink2:#8AA2AC;
-  --ink3:#718E97;
-  --amber:#FFB020;
-  --eh:#2F9BD8;
-  --ok:#4FD18B;
-  --bad:#FF6B5A;
-  --liq:#1E6E9E;
-  --liq2:#8A6A3A;
+  --bg:#07111b; --bg2:#0b1724; --panel:#0e1b29; --panel2:#101f2f; --line:#23384b;
+  --ink:#eaf4fa; --muted:#90a7b8; --blue:#27a8ff; --cyan:#62d5ff; --amber:#ffbd36;
+  --green:#72d348; --red:#ff685f; --shadow:0 18px 50px rgba(0,0,0,.28);
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;padding:0;background:var(--bg);color:var(--ink)}
-body{
-  font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
-  padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
-  -webkit-text-size-adjust:100%;
-}
-.cond{font-family:"Avenir Next Condensed","HelveticaNeue-CondensedBold","Helvetica Neue Condensed",Oswald,Impact,sans-serif}
-.mono{font-family:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,monospace;font-variant-numeric:tabular-nums}
-.wrap{max-width:760px;margin:0 auto;padding:0 14px 60px}
+html,body{margin:0;background:radial-gradient(circle at 45% 0%,#11283c 0,#07111b 42%,#050b12 100%);color:var(--ink);font:14px/1.45 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100%}
+body{padding:0 0 28px}.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-variant-numeric:tabular-nums}
+.app{max-width:1540px;margin:0 auto;padding:14px}.topbar{display:grid;grid-template-columns:auto 1fr auto;gap:18px;align-items:center;border:1px solid #1e5a80;background:linear-gradient(180deg,rgba(10,26,40,.98),rgba(5,15,24,.98));border-radius:14px;padding:13px 18px;box-shadow:var(--shadow)}
+.brand{display:flex;gap:12px;align-items:center}.logo{width:44px;height:44px;border-radius:12px;border:1px solid var(--line);background:#0a1b2a;display:grid;place-items:center;font-size:24px}.brand h1{font-size:24px;line-height:1;margin:0}.brand p{margin:5px 0 0;color:var(--blue);font-size:12px;letter-spacing:.08em;text-transform:uppercase}.tagline{min-width:180px}.tagbox{width:100%;background:#081521;border:1px solid var(--line);border-radius:9px;color:var(--amber);padding:10px 12px;font-size:17px}.status{display:flex;align-items:center;gap:10px;color:#cfe9d2}.dot{width:11px;height:11px;border-radius:50%;background:#25c85b;box-shadow:0 0 16px rgba(37,200,91,.7)}
+.arr-strip{margin-top:12px;background:rgba(8,19,30,.8);border:1px solid var(--line);border-radius:12px;padding:10px}.arrs{display:flex;gap:8px;overflow-x:auto}.arr{flex:0 0 auto;min-width:180px;text-align:left;background:#0b1824;border:1px solid var(--line);border-radius:9px;padding:9px 11px;color:var(--muted);cursor:pointer}.arr b{display:block;color:#dcebf3;font-size:12px}.arr span{display:block;font-size:10px;margin-top:2px}.arr.on{border-color:var(--blue);background:#0b2940;box-shadow:inset 0 0 0 1px rgba(39,168,255,.16)}.arr.on b{color:var(--cyan)}
+.workspace{display:grid;grid-template-columns:minmax(270px,320px) minmax(520px,1fr) minmax(300px,350px);gap:14px;margin-top:14px}.panel{background:linear-gradient(180deg,rgba(14,27,41,.96),rgba(9,20,31,.96));border:1px solid var(--line);border-radius:13px;box-shadow:var(--shadow);overflow:hidden}.panel-title{padding:12px 14px;border-bottom:1px solid var(--line);font-weight:700;letter-spacing:.04em}.leftcol,.rightcol{display:flex;flex-direction:column;gap:12px}.panel-body{padding:12px}
+.ctl{padding:11px 0;border-bottom:1px solid rgba(35,56,75,.7)}.ctl:last-child{border-bottom:0}.ctl.hide{display:none}.ctl .top{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:7px}.ctl label{color:#b8cad6;font-size:12px}.hint{font-size:10.5px;color:#738c9f;margin-top:5px}.numbox,.dens input{background:#07131e;border:1px solid var(--line);border-radius:7px;color:#e9f6ff;padding:7px 8px;text-align:right;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}.numbox{width:88px}.numbox.wide{width:108px}.numbox.amber{color:var(--amber)}.unitmm{font-size:10px;color:#7f97a8;margin-left:4px}.dens{display:grid;grid-template-columns:1fr 1fr;gap:8px}.dens .f{display:flex;flex-direction:column;gap:4px}.dens .f>span{font-size:10px;color:#7f97a8}.dens input{width:100%;text-align:left}.presets{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}.presets button,.cbtn,.solve,.ghost{background:#081521;border:1px solid var(--line);color:#9fb5c4;border-radius:7px;padding:8px 9px;cursor:pointer}.presets button:active,.cbtn.on{border-color:var(--blue);color:var(--cyan)}
+input[type=range]{width:100%;accent-color:var(--blue)}
+.center{display:flex;flex-direction:column;gap:12px}.stage{position:relative;min-height:660px;background:linear-gradient(180deg,#08131d,#07101a);border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:var(--shadow)}.stage-head{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line);background:#0c1c2a}.stage-head .live{color:var(--green);font-weight:700}.draw{height:570px;display:grid;place-items:center;padding:12px}.draw svg{width:100%;height:100%;max-height:560px}.vert-control{position:absolute;top:100px;bottom:88px;width:70px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;z-index:4}.vert-control.level{left:8px}.vert-control.tx{right:8px}.vert-control label{font-size:10px;color:#94a9b8;text-transform:uppercase;letter-spacing:.11em}.vert-control strong{font-size:16px;color:var(--green)}.vert-control.tx strong{color:var(--amber)}.vertical{writing-mode:vertical-lr;direction:rtl;height:390px;width:30px;accent-color:var(--green)}.tx .vertical{accent-color:var(--amber)}.physics{margin:0 16px 14px;padding:10px 12px;border:1px solid #25465b;background:#0a1926;border-radius:9px;color:#9fb8c8;font-size:11.5px}
+.hud{background:linear-gradient(180deg,#07131e,#0a1b28);border:1px solid var(--line);border-radius:12px;overflow:hidden}.hud-top{display:flex;align-items:flex-end;justify-content:space-between;padding:15px}.pv{display:flex;gap:8px;align-items:baseline}.pv .n{font-size:40px;color:var(--amber)}.pv .u,.ma .u{font-size:10px;color:#7d95a6;text-transform:uppercase}.ma{text-align:right}.ma .n{font-size:25px;color:var(--cyan)}.bar{height:5px;background:#06101a}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--blue),var(--green));transition:width .12s}.bar.over i{background:var(--red)}.hud-bot{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line)}.cell{padding:12px;border-right:1px solid var(--line)}.cell:last-child{border-right:0}.cell .k{font-size:9px;color:#7d95a6;text-transform:uppercase;letter-spacing:.08em}.cell .v{font-size:19px;margin-top:4px;color:var(--green)}.cell .mm{font-size:10px;color:#7892a3}
+.results{padding:12px}.result-card{border:1px solid var(--line);background:#091722;border-radius:10px;padding:12px;margin-bottom:10px}.result-card small{display:block;color:#7d95a6;text-transform:uppercase;letter-spacing:.08em}.result-card .big{font-size:31px;margin-top:4px;color:var(--blue)}.result-card .formula{font-size:11px;color:#71899b;margin-top:5px}.check{border:1px solid var(--line);border-radius:10px;overflow:hidden}.check .hd{padding:10px;background:#0c1b28;display:flex;justify-content:space-between;align-items:center}.check .bd{padding:10px}.cond2{display:flex;gap:6px}.row{display:flex;justify-content:space-between;gap:10px;padding:5px 0;font-size:11px}.row .k{color:#7e95a6}.verdict{margin-top:8px;padding:9px;border-radius:7px;background:#07131e;border:1px solid var(--line);font-size:11px}.verdict.ok{border-color:#245c42;color:#7be4aa}.verdict.bad{border-color:#6b352e;color:#ff8f85}.solve{width:100%;margin-top:8px;color:var(--amber)}
+.saved{display:flex;gap:6px;overflow:auto;padding:8px 0}.chip{background:#081521;border:1px solid var(--line);border-radius:999px;color:#94aabb;padding:7px 9px}.save{display:flex;gap:8px;padding:12px}.save button{flex:1;border:0;border-radius:8px;padding:11px;background:var(--blue);color:white;font-weight:700}.save .ghost{background:#081521;border:1px solid var(--line);color:#a8bdc9}.note{font-size:10px;color:#6f8797;padding:0 12px 12px;margin:0}.toast{position:fixed;left:50%;bottom:20px;transform:translate(-50%,20px);opacity:0;background:#102231;border:1px solid var(--line);padding:10px 16px;border-radius:999px;transition:.2s;z-index:20}.toast.on{opacity:1;transform:translate(-50%,0)}
+@media(max-width:1120px){.workspace{grid-template-columns:300px 1fr}.rightcol{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr}.rightcol>.panel:last-child{grid-column:1/-1}}
+@media(max-width:760px){.app{padding:8px}.topbar{grid-template-columns:1fr auto}.tagline{grid-column:1/-1}.workspace{grid-template-columns:1fr}.leftcol{order:2}.center{order:1}.rightcol{order:3;display:flex}.stage{min-height:570px}.draw{height:490px}.vertical{height:310px}.brand h1{font-size:20px}.status span:last-child{display:none}}
 
-/* ---------- cabeçalho ---------- */
-header{padding:18px 0 12px;border-bottom:1px solid var(--line)}
-.eyebrow{
-  font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink3);
-  display:flex;justify-content:space-between;align-items:center;gap:10px
-}
-.tagline{display:flex;align-items:center;gap:10px;margin-top:8px}
-.tagbox{
-  flex:1;min-width:0;background:transparent;border:0;border-bottom:1px solid var(--line2);
-  color:var(--amber);font-size:27px;letter-spacing:.05em;padding:2px 0 5px;
-  font-family:"Avenir Next Condensed","HelveticaNeue-CondensedBold",sans-serif;font-weight:600;
-}
-.tagbox:focus{outline:0;border-bottom-color:var(--amber)}
+/* ===== v2 didática / referência clara ===== */
+:root{--paper:#eef3f6;--paper2:#dfe7eb;--steel:#9aa8b0;--steel2:#52636d}
+.workspace{grid-template-columns:minmax(245px,290px) minmax(620px,1fr) minmax(285px,330px)}
+.stage{background:linear-gradient(180deg,#f7fafb 0%,#e9eff2 72%,#dce5e9 100%);border-color:#8da0aa;box-shadow:0 16px 45px rgba(0,0,0,.22)}
+.stage-head{background:#e9eff2;color:#183041;border-color:#a9bac3}.stage-head .live{color:#16863f}
+.draw{height:610px}.draw svg{filter:drop-shadow(0 8px 10px rgba(17,31,39,.18))}
+.vert-control{background:rgba(245,249,251,.88);border:1px solid #b9c7ce;border-radius:12px;padding:9px 5px;top:82px;bottom:76px}
+.vert-control label{color:#425a68}.vert-control strong{color:#16863f}.vert-control.tx strong{color:#b97700}
+.physics{background:#f7fbfd;border-color:#9ebdce;color:#365364;font-weight:600}
+.bottom-arr{margin-top:14px;padding:12px;background:linear-gradient(180deg,#0c1b29,#07131e)}
+.arr-caption{display:flex;justify-content:space-between;align-items:end;gap:15px;margin-bottom:9px;color:#dcebf3}.arr-caption strong{font-size:12px;letter-spacing:.1em}.arr-caption span{font-size:10px;color:#7790a1}
+.arrs{gap:10px}.arr{min-width:154px;height:118px;padding:9px;display:flex;flex-direction:column;justify-content:flex-end;position:relative;overflow:hidden;background:#0b1824}.arr:before{content:"";position:absolute;left:12px;right:12px;top:9px;height:58px;border-radius:7px;background:linear-gradient(180deg,#112c3d,#091722);border:1px solid #29475a}.arr:after{content:"◯  │  ▯";position:absolute;top:25px;left:0;right:0;text-align:center;color:#8ecff0;font:22px/1 ui-monospace,monospace;letter-spacing:4px}.arr b,.arr span{position:relative;z-index:2}.arr.on{box-shadow:inset 0 0 0 1px rgba(39,168,255,.3),0 0 22px rgba(39,168,255,.12)}
+.arr.on:before{border-color:#27a8ff;background:linear-gradient(180deg,#11354c,#0b2131)}
+.panel{box-shadow:0 10px 28px rgba(0,0,0,.18)}
+@media(max-width:1180px){.workspace{grid-template-columns:280px 1fr}.rightcol{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr}.rightcol>.panel:last-child{grid-column:1/-1}}
+@media(max-width:780px){.workspace{grid-template-columns:1fr}.draw{height:500px}.arr-caption{align-items:flex-start;flex-direction:column}.arr{min-width:142px}.rightcol{display:flex;flex-direction:column}.rightcol>.panel:last-child{grid-column:auto}}
 
-/* ---------- vasos salvos ---------- */
-.saved{display:flex;gap:7px;overflow-x:auto;padding:12px 0 4px;-webkit-overflow-scrolling:touch}
-.saved::-webkit-scrollbar{display:none}
-.chip{
-  flex:0 0 auto;background:var(--panel);border:1px solid var(--line);color:var(--ink2);
-  padding:11px 14px;border-radius:999px;font-size:12.5px;letter-spacing:.04em;cursor:pointer;
-  display:flex;align-items:center;gap:7px;white-space:nowrap
-}
-.chip:active{background:var(--panel2)}
-.chip.on{border-color:var(--amber);color:var(--amber);background:#1B1608}
-.chip .x{color:var(--ink3);font-size:15px;line-height:1}
-.chip.add{border-style:dashed;color:var(--ink3)}
-
-/* ---------- arranjo ---------- */
-.sect{margin-top:22px}
-.sect > h2{
-  font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink3);
-  margin:0 0 10px;font-weight:600
-}
-.arrs{display:grid;grid-template-columns:1fr 1fr;gap:7px}
-@media(max-width:430px){.arrs{grid-template-columns:1fr}}
-.arr{
-  text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:9px;
-  padding:13px 14px;color:var(--ink2);cursor:pointer;font-size:13px;line-height:1.35
-}
-.arr b{display:block;color:var(--ink);font-size:13.5px;font-weight:600;letter-spacing:.01em}
-.arr span{display:block;font-size:11.5px;color:var(--ink3);margin-top:2px}
-.arr.on{border-color:var(--eh);background:#0D2430}
-.arr.on b{color:var(--eh)}
-
-/* ---------- display do transmissor ---------- */
-.hud{
-  margin-top:18px;background:linear-gradient(180deg,#0A1216,#101D24);
-  border:1px solid var(--line2);border-radius:12px;overflow:hidden
-}
-.hud-top{display:flex;align-items:flex-end;justify-content:space-between;padding:14px 16px 10px;gap:12px}
-.pv{display:flex;align-items:baseline;gap:8px;min-width:0}
-.pv .n{font-size:38px;letter-spacing:-.02em;color:var(--amber);line-height:1}
-.pv .u{font-size:12px;color:var(--ink3);letter-spacing:.12em;text-transform:uppercase}
-.ma{text-align:right;flex:0 0 auto}
-.ma .n{font-size:24px;color:var(--eh);line-height:1.1}
-.ma .u{font-size:10px;color:var(--ink3);letter-spacing:.16em;text-transform:uppercase}
-.bar{height:5px;background:#0A1216;border-top:1px solid var(--line)}
-.bar i{display:block;height:100%;background:var(--eh);transition:width .12s linear}
-.bar.over i{background:var(--bad)}
-.hud-bot{display:grid;grid-template-columns:1fr 1fr 1fr;border-top:1px solid var(--line)}
-.cell{padding:10px 12px;border-right:1px solid var(--line)}
-.cell:last-child{border-right:0}
-.cell .k{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
-.cell .v{font-size:16px;margin-top:3px;color:var(--ink)}
-.cell .v.sm{font-size:14px}
-.cell .mm{font-size:10.5px;color:var(--ink3);margin-top:1px}
-
-/* ---------- desenho ---------- */
-.draw{margin-top:16px;background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:6px}
-svg{display:block;width:100%;height:auto}
-
-/* ---------- controles ---------- */
-.ctl{margin-top:14px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 13px}
-.ctl.hide{display:none}
-.ctl .top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:9px}
-.ctl label{font-size:12.5px;color:var(--ink2);letter-spacing:.01em}
-.ctl .hint{font-size:11px;color:var(--ink3);margin-top:7px;line-height:1.4}
-.numbox{
-  width:78px;background:#0A1216;border:1px solid var(--line2);border-radius:6px;
-  color:var(--ink);padding:9px 7px;font-size:14.5px;text-align:right;
-  font-family:ui-monospace,"SF Mono",Menlo,monospace;font-variant-numeric:tabular-nums
-}
-.numbox.wide{width:104px}
-.numbox.amber{color:var(--amber)}
-.numbox:focus{outline:0;border-color:var(--amber)}
-.unitmm{font-size:10.5px;color:var(--ink3);margin-left:5px;letter-spacing:.08em}
-input[type=range]{
-  -webkit-appearance:none;appearance:none;width:100%;height:44px;background:transparent;margin:0
-}
-input[type=range]::-webkit-slider-runnable-track{height:3px;background:var(--line2);border-radius:2px}
-input[type=range]::-webkit-slider-thumb{
-  -webkit-appearance:none;width:24px;height:24px;border-radius:50%;background:var(--amber);
-  border:3px solid var(--bg);margin-top:-10.5px;box-shadow:0 1px 4px rgba(0,0,0,.6)
-}
-input[type=range]::-moz-range-track{height:3px;background:var(--line2);border-radius:2px}
-input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--amber);border:3px solid var(--bg)}
-
-.dens{display:grid;grid-template-columns:1fr 1fr;gap:11px}
-.dens .f{display:flex;flex-direction:column;gap:5px}
-.dens .f > span{font-size:11px;color:var(--ink3);letter-spacing:.05em}
-.dens input{
-  background:#0A1216;border:1px solid var(--line2);border-radius:6px;color:var(--ink);
-  padding:7px 8px;font-size:15px;width:100%;
-  font-family:ui-monospace,"SF Mono",Menlo,monospace;font-variant-numeric:tabular-nums
-}
-.dens input:focus{outline:0;border-color:var(--amber)}
-.presets{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
-.presets button{
-  background:#0A1216;border:1px solid var(--line);color:var(--ink2);border-radius:6px;
-  padding:9px 12px;font-size:11.5px;cursor:pointer
-}
-.presets button:active{border-color:var(--amber);color:var(--amber)}
-
-/* ---------- conferência ---------- */
-.check{margin-top:14px;border:1px solid var(--line);border-radius:10px;overflow:hidden}
-.check .hd{
-  background:var(--panel);padding:11px 13px;display:flex;justify-content:space-between;
-  align-items:center;gap:10px;border-bottom:1px solid var(--line)
-}
-.check .hd span:first-child{font-size:12.5px;color:var(--ink2)}
-.check .bd{padding:12px 13px;background:var(--panel2)}
-.row{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:5px 0}
-.row .k{font-size:12px;color:var(--ink3)}
-.row .v{font-size:14.5px}
-.cond2{display:flex;gap:6px;margin-bottom:11px}
-.cbtn{
-  flex:1;background:#0A1216;border:1px solid var(--line);color:var(--ink3);border-radius:7px;
-  padding:12px 8px;font-size:11px;line-height:1.3;cursor:pointer
-}
-.cbtn.on{border-color:var(--eh);color:var(--eh);background:#0D2430}
-.verdict{
-  margin-top:10px;padding:10px 12px;border-radius:8px;font-size:13px;line-height:1.45;
-  border:1px solid var(--line2);background:#0A1216
-}
-.verdict.ok{border-color:#1E5C42;background:#0A1D16;color:var(--ok)}
-.verdict.bad{border-color:#5C2A24;background:#1D0E0C;color:var(--bad)}
-.solve{
-  margin-top:10px;width:100%;background:#0A1216;border:1px solid var(--line2);color:var(--amber);
-  border-radius:8px;padding:11px;font-size:13.5px;cursor:pointer;letter-spacing:.02em
-}
-.solve:active{background:#151F0A}
-
-/* ---------- salvar ---------- */
-.save{
-  margin-top:20px;display:flex;gap:8px
-}
-.save button{
-  flex:1;border-radius:9px;padding:13px;font-size:14px;cursor:pointer;letter-spacing:.02em;
-  background:var(--amber);border:0;color:#1A1204;font-weight:600
-}
-.save button.ghost{background:transparent;border:1px solid var(--line2);color:var(--ink2);font-weight:400}
-.note{margin-top:14px;font-size:11.5px;color:var(--ink3);line-height:1.5}
-
-.toast{
-  position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);opacity:0;
-  background:var(--panel);border:1px solid var(--line2);color:var(--ink);
-  padding:11px 18px;border-radius:999px;font-size:13px;pointer-events:none;
-  transition:opacity .2s,transform .2s;z-index:9
-}
-.toast.on{opacity:1;transform:translate(-50%,0)}
-@media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
 <body>
-<div class="wrap">
+<div class="app">
+  <header class="topbar">
+    <div class="brand"><div class="logo">⚙</div><div><h1>Régua de Nível</h1><p>Simulador de transmissor DP</p></div></div>
+    <div class="tagline"><input type="text" class="tagbox" id="tagName" value="LT-971016" aria-label="Tag do instrumento" spellcheck="false"></div>
+    <div class="status"><span class="dot"></span><span>SISTEMA OPERACIONAL</span><span class="mono" id="ehead">FMD72</span></div>
+  </header>
 
-<header>
-  <div class="eyebrow">
-    <span>Régua de nível · pressão diferencial</span>
-    <span class="mono" id="ehead">FMD72</span>
-  </div>
-  <div class="tagline">
-    <input type="text" class="tagbox" id="tagName" value="LT-971016" aria-label="Tag do instrumento" spellcheck="false">
-  </div>
-  <div class="saved" id="saved"></div>
-</header>
 
-<section class="sect">
-  <h2>Arranjo de medição</h2>
-  <div class="arrs" id="arrs"></div>
-</section>
+  <main class="workspace">
+    <aside class="leftcol">
+      <section class="panel"><div class="panel-title">CONFIGURAÇÃO DO VASO</div><div class="panel-body">
+        <div class="ctl" data-f="vaso"><div class="top"><label for="vas">Altura útil do vaso</label><span><input type="number" class="numbox amber" id="oVas" value="900" min="100" max="6000" step="1"><span class="unitmm">mm</span></span></div><input type="range" id="vas" min="100" max="4000" step="1" value="900"></div>
+        <div class="ctl" data-f="span"><div class="top"><label for="spn" id="lblSpan">Span · 0 a 100%</label><span><input type="number" class="numbox amber" id="oSpn" value="850" min="10" max="6000" step="1"><span class="unitmm">mm</span></span></div><input type="range" id="spn" min="10" max="4000" step="1" value="850"></div>
+        <div class="ctl" data-f="nivel"><div class="top"><label for="lvl">LG · nível entre tomadas (0–100%)</label><span><input type="number" class="numbox" id="oLvl" value="0" min="0" step="1"><span class="unitmm">mm</span></span></div><input type="range" id="lvl" min="0" max="900" step="1" value="0"></div>
+      </div></section>
 
-<div class="hud">
-  <div class="hud-top">
-    <div class="pv"><span class="n mono" id="hPV">0</span><span class="u">mmH₂O</span></div>
-    <div class="ma"><div class="n mono" id="hMA">4,00</div><div class="u">mA · <span id="hPC">0</span>%</div></div>
-  </div>
-  <div class="bar" id="hBar"><i style="width:0%"></i></div>
-  <div class="hud-bot">
-    <div class="cell"><div class="k">LRV · 0%</div><div class="v mono" id="hLRV">0</div><div class="mm mono" id="hLRVmm"></div></div>
-    <div class="cell"><div class="k">URV · 100%</div><div class="v mono" id="hURV">0</div><div class="mm mono" id="hURVmm"></div></div>
-    <div class="cell"><div class="k">Span</div><div class="v mono" id="hSPN">0</div><div class="mm mono" id="hSPNmm"></div></div>
-  </div>
-</div>
+      <section class="panel"><div class="panel-title">GEOMETRIA / TRANSMISSOR</div><div class="panel-body">
+        <div class="ctl" data-f="inf"><div class="top"><label for="inf" id="lblInf">Tomada inferior</label><span><input type="number" class="numbox amber" id="oInf" value="400" min="0" max="3000" step="1"><span class="unitmm">mm</span></span></div><input type="range" id="inf" min="0" max="2000" step="1" value="400"><div class="hint" id="hintInf"></div></div>
+        <div class="ctl" data-f="sup"><div class="top"><label for="sup" id="lblSup">Tomada superior</label><span><input type="number" class="numbox amber" id="oSup" value="400" min="0" max="3000" step="1"><span class="unitmm">mm</span></span></div><input type="range" id="sup" min="0" max="2000" step="1" value="400"></div>
+        <div class="ctl" data-f="alt"><div class="top"><label for="alt" id="lblAlt">Altura do transmissor</label><span><input type="number" class="numbox" id="oAlt" value="700" min="-3000" max="4000" step="1"><span class="unitmm">mm</span></span></div><input type="range" id="alt" min="-1500" max="3000" step="1" value="700"><div class="hint" id="hintAlt"></div></div>
+        <div class="ctl" data-f="pote"><div class="top"><label for="pot">Pote de selagem acima do topo</label><span><input type="number" class="numbox amber" id="oPot" value="300" min="0" max="3000" step="1"><span class="unitmm">mm</span></span></div><input type="range" id="pot" min="0" max="2000" step="1" value="300"><div class="hint">Referência no furo lateral do pote.</div></div>
+      </div></section>
 
-<div class="draw"><svg id="svg" viewBox="0 0 700 460" role="img" aria-label="Desenho do arranjo de medição"></svg></div>
+      <section class="panel"><div class="panel-title">DENSIDADES</div><div class="panel-body"><div class="ctl" data-f="dens"><div class="dens">
+        <label class="f" data-d="prod"><span>Densidade do produto</span><input type="number" id="dProd" value="0.547" min="0.05" max="3" step="0.001"></label>
+        <label class="f" data-d="fill"><span>Densidade do capilar</span><input type="number" id="dFill" value="0.8256" min="0.05" max="3" step="0.0001"></label>
+        <label class="f" data-d="sel"><span>Densidade do líq. de selagem</span><input type="number" id="dSel" value="1.0" min="0.05" max="3" step="0.001"></label>
+        <label class="f" data-d="leve"><span>Densidade do líquido leve</span><input type="number" id="dLeve" value="0.70" min="0.05" max="3" step="0.001"></label>
+        <label class="f" data-d="pes"><span>Densidade do líquido pesado</span><input type="number" id="dPes" value="1.00" min="0.05" max="3" step="0.001"></label>
+      </div><div class="presets" id="presFill"><button type="button" data-d="0.8256">0,8256</button><button type="button" data-d="0.85">Syltherm 0,85</button><button type="button" data-d="0.934">Silicone 0,934</button><button type="button" data-d="1.004">Água-glicol 1,004</button></div></div></div></section>
+    </aside>
 
-<!-- ==================== controles ==================== -->
+    <section class="center">
+      <div class="stage">
+        <div class="stage-head"><strong>VASO / INSTALAÇÃO</strong><span>Nível atual <span class="live mono" id="liveLevelPct">0,0%</span></span></div>
+        <div class="vert-control level"><label>LG</label><strong id="levelBadge">Nível</strong><input class="vertical" type="range" id="vLvl" min="0" max="900" value="0" step="1" aria-label="Nível de produto"></div>
+        <div class="draw"><svg id="svg" viewBox="0 0 700 460" role="img" aria-label="Desenho do arranjo de medição"></svg></div>
+        <div class="vert-control tx"><label>Transmissor</label><strong>TX</strong><input class="vertical" type="range" id="vAlt" min="0" max="1700" value="700" step="1" aria-label="Altura do transmissor"></div>
+        <div class="physics" id="physNote">A posição do transmissor participa do cálculo conforme o arranjo selecionado.</div>
+      </div>
+    </section>
 
-<div class="ctl" data-f="nivel">
-  <div class="top"><label for="lvl">Nível de produto</label>
-    <span><input type="number" class="numbox" id="oLvl" value="0" min="0" step="1" aria-label="Nível em milímetros"><span class="unitmm">mm</span></span></div>
-  <input type="range" id="lvl" min="0" max="900" step="1" value="0" aria-label="Nível de produto">
-</div>
+    <aside class="rightcol">
+      <section class="panel"><div class="panel-title">LEITURA DO TRANSMISSOR</div><div class="panel-body">
+        <div class="hud"><div class="hud-top"><div class="pv"><span class="n mono" id="hPV">0</span><span class="u">mmH₂O · PV</span></div><div class="ma"><div class="n mono" id="hMA">4,00</div><div class="u">mA · <span id="hPC">0</span>%</div></div></div><div class="bar" id="hBar"><i style="width:0%"></i></div><div class="hud-bot"><div class="cell"><div class="k">LRV · 0%</div><div class="v mono" id="hLRV">0</div><div class="mm mono" id="hLRVmm"></div></div><div class="cell"><div class="k">URV · 100%</div><div class="v mono" id="hURV">0</div><div class="mm mono" id="hURVmm"></div></div><div class="cell"><div class="k">SPAN</div><div class="v mono" id="hSPN">0</div><div class="mm mono" id="hSPNmm"></div></div></div></div>
+      </div></section>
 
-<div class="ctl" data-f="vaso">
-  <div class="top"><label for="vas">Altura do vaso</label>
-    <span><input type="number" class="numbox amber" id="oVas" value="900" min="100" max="6000" step="1" aria-label="Altura do vaso"><span class="unitmm">mm</span></span></div>
-  <input type="range" id="vas" min="100" max="4000" step="1" value="900" aria-label="Altura do vaso">
-</div>
+      <section class="panel"><div class="panel-title">CONFERÊNCIA DE CAMPO</div><div class="panel-body"><div class="check" data-f="med"><div class="hd"><span>ΔP medido</span><span><input type="number" class="numbox wide" id="med" value="-1403.6" step="0.1"><span class="unitmm">mmH₂O</span></span></div><div class="bd"><div class="cond2"><button type="button" class="cbtn on" data-c="seco">Selos secos</button><button type="button" class="cbtn" data-c="oper">Vaso vazio</button></div><div class="row"><span class="k">Elevação · coluna</span><span class="v mono" id="cElev">—</span></div><div class="row"><span class="k">Supressão</span><span class="v mono" id="cSupr">—</span></div><div class="row"><span class="k" id="kCalc">Calculado</span><span class="v mono" id="cCalc">—</span></div><div class="row"><span class="k">Diferença</span><span class="v mono" id="cDif">—</span></div><div class="row" id="rowCol"><span class="k">Coluna implícita</span><span class="v mono" id="cCol">—</span></div><div class="row" id="rowGeo"><span class="k">Separação geométrica</span><span class="v mono" id="cGeo">—</span></div><div class="verdict" id="cVerd">—</div><button type="button" class="solve" id="btnSolve">Usar densidade que fecha a conta</button></div></div></div></section>
 
-<div class="ctl" data-f="inf">
-  <div class="top"><label for="inf" id="lblInf">Tomada de alta abaixo do fundo</label>
-    <span><input type="number" class="numbox amber" id="oInf" value="400" min="0" max="3000" step="1" aria-label="Tomada de alta"><span class="unitmm">mm</span></span></div>
-  <input type="range" id="inf" min="0" max="2000" step="1" value="400" aria-label="Tomada de alta abaixo do fundo">
-  <div class="hint" id="hintInf"></div>
-</div>
-
-<div class="ctl" data-f="sup">
-  <div class="top"><label for="sup" id="lblSup">Tomada de baixa acima do topo</label>
-    <span><input type="number" class="numbox amber" id="oSup" value="400" min="0" max="3000" step="1" aria-label="Tomada de baixa"><span class="unitmm">mm</span></span></div>
-  <input type="range" id="sup" min="0" max="2000" step="1" value="400" aria-label="Tomada de baixa acima do topo">
-</div>
-
-<div class="ctl" data-f="alt">
-  <div class="top"><label for="alt" id="lblAlt">Altura do transmissor</label>
-    <span><input type="number" class="numbox" id="oAlt" value="700" min="-3000" max="4000" step="1" aria-label="Altura do transmissor"><span class="unitmm">mm</span></span></div>
-  <input type="range" id="alt" min="-1500" max="3000" step="1" value="700" aria-label="Altura do transmissor">
-  <div class="hint" id="hintAlt"></div>
-</div>
-
-<div class="ctl" data-f="pote">
-  <div class="top"><label for="pot">Pote de selagem acima do topo</label>
-    <span><input type="number" class="numbox amber" id="oPot" value="300" min="0" max="3000" step="1" aria-label="Altura do pote"><span class="unitmm">mm</span></span></div>
-  <input type="range" id="pot" min="0" max="2000" step="1" value="300" aria-label="Altura do pote de selagem">
-  <div class="hint">A cota de referência do zero é o furo lateral do pote, onde o líquido se autonivela.</div>
-</div>
-
-<div class="ctl" data-f="span">
-  <div class="top"><label for="spn" id="lblSpan">Span · 0 a 100%</label>
-    <span><input type="number" class="numbox amber" id="oSpn" value="850" min="10" max="6000" step="1" aria-label="Span em milímetros"><span class="unitmm">mm</span></span></div>
-  <input type="range" id="spn" min="10" max="4000" step="1" value="850" aria-label="Span em milímetros">
-</div>
-
-<div class="ctl" data-f="dens">
-  <div class="dens">
-    <label class="f" data-d="prod"><span>Densidade do produto</span>
-      <input type="number" id="dProd" value="0.547" min="0.05" max="3" step="0.001" aria-label="Densidade do produto"></label>
-    <label class="f" data-d="fill"><span>Densidade do capilar</span>
-      <input type="number" id="dFill" value="0.8256" min="0.05" max="3" step="0.0001" aria-label="Densidade do fluido de enchimento"></label>
-    <label class="f" data-d="sel"><span>Densidade do líq. de selagem</span>
-      <input type="number" id="dSel" value="1.0" min="0.05" max="3" step="0.001" aria-label="Densidade do líquido de selagem"></label>
-    <label class="f" data-d="leve"><span>Densidade do líquido leve</span>
-      <input type="number" id="dLeve" value="0.70" min="0.05" max="3" step="0.001" aria-label="Densidade do líquido leve"></label>
-    <label class="f" data-d="pes"><span>Densidade do líquido pesado</span>
-      <input type="number" id="dPes" value="1.00" min="0.05" max="3" step="0.001" aria-label="Densidade do líquido pesado"></label>
-  </div>
-  <div class="presets" id="presFill">
-    <button type="button" data-d="0.8256">deduzida 0,8256</button>
-    <button type="button" data-d="0.85">syltherm 0,85</button>
-    <button type="button" data-d="0.934">silicone 0,934</button>
-    <button type="button" data-d="1.004">água-glicol 1,004</button>
-  </div>
-</div>
-
-<div class="check" data-f="med">
-  <div class="hd">
-    <span>Medição de campo · vaso vazio</span>
-    <span><input type="number" class="numbox wide" id="med" value="-1403.6" step="0.1" aria-label="Delta P lido no programador"><span class="unitmm">mmH₂O</span></span>
-  </div>
-  <div class="bd">
-    <div class="cond2">
-      <button type="button" class="cbtn on" data-c="seco">Selos secos · tomadas bloqueadas</button>
-      <button type="button" class="cbtn" data-c="oper">Vaso vazio · em operação</button>
-    </div>
-    <div class="row"><span class="k">Elevação · coluna do capilar</span><span class="v mono" id="cElev">—</span></div>
-    <div class="row"><span class="k">Supressão · perna alagada</span><span class="v mono" id="cSupr">—</span></div>
-    <div class="row"><span class="k" id="kCalc">Calculado pela geometria</span><span class="v mono" id="cCalc">—</span></div>
-    <div class="row"><span class="k">Diferença</span><span class="v mono" id="cDif">—</span></div>
-    <div class="row" id="rowCol"><span class="k">Coluna implícita da medição</span><span class="v mono" id="cCol">—</span></div>
-    <div class="row" id="rowGeo"><span class="k">Separação geométrica digitada</span><span class="v mono" id="cGeo">—</span></div>
-    <div class="verdict" id="cVerd">—</div>
-    <button type="button" class="solve" id="btnSolve">Usar a densidade que fecha a conta</button>
-  </div>
-</div>
-
-<div class="save">
-  <button type="button" id="btnSave">Salvar este vaso</button>
-  <button type="button" class="ghost" id="btnNew">Novo</button>
-</div>
-
-<p class="note">Os valores ficam salvos neste aparelho. O que o transmissor indicar em campo prevalece sobre o cálculo — a conta serve para conferir se o número faz sentido.</p>
-
+      <section class="panel"><div class="panel-title">ARQUIVO LOCAL</div><div class="save"><button type="button" id="btnSave">Salvar este vaso</button><button type="button" class="ghost" id="btnNew">Novo</button></div><p class="note">Os valores ficam salvos neste aparelho. A leitura de campo prevalece sobre o cálculo; a ferramenta serve para conferir a coerência física.</p></section>
+    </aside>
+  </main>
+  <section class="arr-strip bottom-arr"><div class="arr-caption"><strong>ARRANJOS DISPONÍVEIS</strong><span>Clique para mudar o tipo de instalação e a lógica do cálculo</span></div><div class="arrs" id="arrs"></div><div class="saved" id="saved"></div></section>
 </div>
 <div class="toast" id="toast"></div>
 
@@ -423,7 +197,7 @@ var ARR = {
     altBaixo:true, iface:true
   }
 };
-var ordem = ["direto","camara","remoto","capilarLP","pernaumida","interface"];
+var ordem = ["remoto","capilarLP","pernaumida"];
 var atual = "remoto";
 
 /* ---------------- pares slider + caixa ---------------- */
@@ -492,139 +266,198 @@ function calc(){
           LRV:LRV, URV:URV, span:span, PV:PV, pc:pc, ma:ma};
 }
 
+/* ---------------- referência do LG ---------------- */
+function getLGRange(r){
+  // Distância vertical usada pela régua LG: sempre da referência inferior à superior.
+  // Dois selos / selo na alta + capilar na baixa: distância real entre as duas tomadas.
+  if(atual === "remoto" || atual === "capilarLP") return Math.max(1, r.vaso + r.inf + r.sup);
+  // Perna úmida: da tomada de alta até a referência superior do pote/perna de baixa.
+  if(atual === "pernaumida") return Math.max(1, r.vaso + r.inf + r.pot);
+  // Câmara externa: régua entre as conexões inferior e superior da câmara.
+  if(atual === "camara") return Math.max(1, r.vaso);
+  // Interface e direto: usa a faixa de medição configurada como referência útil.
+  return Math.max(1, r.spn || r.vaso);
+}
+
 /* ---------------- desenho ---------------- */
 function svgDraw(r){
   var A = r.A, D = A.desenho;
   var W = 700, H = 460;
-  var topo = r.vaso + Math.max(r.sup, r.pot, 0) + 160;
-  var base = r.inf + Math.max(r.alt < 0 ? -r.alt : (A.altBaixo ? r.alt : 0), A.altBaixo ? 0 : 0) + 160;
-  if(!A.altBaixo) base = r.inf + 160;
-  var total = topo + base;
-  var PX = Math.min(0.30, 340 / Math.max(total, 1));
-  var y0 = H - 60;                              // cota da tomada de alta
-  var Y = function(mm){ return y0 - mm * PX; }; // mm acima da tomada -> pixel
 
-  var cx = 300, wv = 118;                        // vaso
+  // Geometria VISUAL fixa: mover o transmissor nunca redimensiona nem desloca o vaso.
+  // As cotas numéricas continuam vindo do cálculo real; o desenho é didático e permanece estável.
+  var cx = 270, wv = 150;
   var xL = cx - wv/2, xR = cx + wv/2;
-  var yFundo = Y(r.inf), yTopo = Y(r.inf + r.vaso);
-  var cap = Math.min(24, wv*0.26);
+  var yTopo = 82, yFundo = 352, cap = 30;
+  var yHP = 326, yLP = 112;                    // bocais laterais padrão
+  // No arranjo "Selo direto na alta / capilar na baixa", somente o desenho muda:
+  // LP fica na cabeça superior do vaso e HP no fundo inferior. Cálculos permanecem intactos.
+  var capilarVertical = (atual === "capilarLP");
+  var yHPvis = capilarVertical ? (yFundo + cap) : yHP;
+  var yLPvis = capilarVertical ? (yTopo - cap) : yLP;
+  var xT = 505, wT = 58, hT = 34;
   var s = [];
 
   s.push('<defs>'
-    + '<marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">'
-    + '<path d="M0,1 L9,5 L0,9 z" fill="#5A737E"/></marker>'
-    + '<marker id="a2" viewBox="0 0 10 10" refX="1" refY="5" markerWidth="7" markerHeight="7" orient="auto">'
-    + '<path d="M10,1 L1,5 L10,9 z" fill="#5A737E"/></marker>'
-    + '<pattern id="hatch" width="7" height="7" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">'
-    + '<line x1="0" y1="0" x2="0" y2="7" stroke="#2F9BD8" stroke-width="2.5" opacity=".35"/></pattern>'
+    + '<linearGradient id="steel" x1="0" x2="1"><stop offset="0" stop-color="#52636d"/><stop offset="0.18" stop-color="#dce4e8"/><stop offset="0.48" stop-color="#8f9da5"/><stop offset="0.72" stop-color="#eef3f5"/><stop offset="1" stop-color="#52636d"/></linearGradient>'
+    + '<linearGradient id="water" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#38b9ff" stop-opacity=".92"/><stop offset="1" stop-color="#075f94" stop-opacity=".96"/></linearGradient>'
+    + '<marker id="a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,1 L9,5 L0,9 z" fill="#5A737E"/></marker>'
+    + '<marker id="a2" viewBox="0 0 10 10" refX="1" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M10,1 L1,5 L10,9 z" fill="#5A737E"/></marker>'
     + '</defs>');
 
-  // ---- câmara externa
-  var xc = xR + 78, wc = 26;
-  if(D.camara){
-    s.push('<rect x="'+(xc-wc/2)+'" y="'+(yTopo-10)+'" width="'+wc+'" height="'+(yFundo-yTopo+20)+'" rx="5" fill="#0A1216" stroke="#2E454F" stroke-width="1.6"/>');
-    s.push('<line x1="'+xR+'" y1="'+(yTopo+16)+'" x2="'+(xc-wc/2)+'" y2="'+(yTopo+16)+'" stroke="#2E454F" stroke-width="3"/>');
-    s.push('<line x1="'+xR+'" y1="'+(yFundo-16)+'" x2="'+(xc-wc/2)+'" y2="'+(yFundo-16)+'" stroke="#2E454F" stroke-width="3"/>');
-  }
-
-  // ---- corpo do vaso
+  // vaso fixo
   s.push('<path d="M'+xL+','+yTopo+' L'+xL+','+yFundo
     +' Q'+xL+','+(yFundo+cap)+' '+cx+','+(yFundo+cap)
     +' Q'+xR+','+(yFundo+cap)+' '+xR+','+yFundo
     +' L'+xR+','+yTopo
     +' Q'+xR+','+(yTopo-cap)+' '+cx+','+(yTopo-cap)
-    +' Q'+xL+','+(yTopo-cap)+' '+xL+','+yTopo+' Z" fill="#0A1216" stroke="#3A5561" stroke-width="2"/>');
+    +' Q'+xL+','+(yTopo-cap)+' '+xL+','+yTopo+' Z" fill="url(#steel)" stroke="#435963" stroke-width="2"/>');
+  s.push('<path d="M'+(xL+10)+','+(yTopo+12)+' L'+(xL+10)+','+(yFundo-8)+' Q'+(xL+10)+','+(yFundo+17)+' '+cx+','+(yFundo+17)+' Q'+(xR-10)+','+(yFundo+17)+' '+(xR-10)+','+(yFundo-8)+' L'+(xR-10)+','+(yTopo+12)+' Q'+(xR-10)+','+(yTopo-10)+' '+cx+','+(yTopo-10)+' Q'+(xL+10)+','+(yTopo-10)+' '+(xL+10)+','+(yTopo+12)+' Z" fill="#07131a" opacity=".70"/>');
 
-  // ---- líquido
-  var nv = Math.min(r.nivel, r.vaso);
-  var yN = Y(r.inf + nv);
+  // LG é uma régua de conferência ENTRE AS TOMADAS.
+  // 0% = tomada inferior / HP (alta) e 100% = tomada superior / LP (baixa).
+  // Ela não usa o fundo nem o topo físico do vaso como referência.
+  var lgGeom = getLGRange(r);
+  var fracLG = lgGeom > 0 ? Math.max(0, Math.min(1, r.nivel / lgGeom)) : 0;
+  var yLG0 = yHPvis;
+  var yLG100 = yLPvis;
+  var yN = yLG0 - (yLG0-yLG100) * fracLG;
   if(A.iface){
-    // pesado embaixo até o nível, leve acima
-    s.push('<path d="M'+xL+','+yN+' L'+xL+','+yFundo+' Q'+xL+','+(yFundo+cap)+' '+cx+','+(yFundo+cap)
-      +' Q'+xR+','+(yFundo+cap)+' '+xR+','+yFundo+' L'+xR+','+yN+' Z" fill="url(#hatch)"/>');
-    s.push('<rect x="'+xL+'" y="'+yTopo+'" width="'+wv+'" height="'+(yN-yTopo)+'" fill="#8A6A3A" opacity=".28"/>');
-    s.push('<line x1="'+xL+'" y1="'+yN+'" x2="'+xR+'" y2="'+yN+'" stroke="#FFB020" stroke-width="2.5"/>');
-    s.push('<text x="'+(xL+8)+'" y="'+(yTopo+18)+'" fill="#B79A6B" font-size="10" font-family="ui-monospace,Menlo,monospace">leve</text>');
-  } else if(nv > 0){
-    s.push('<path d="M'+xL+','+yN+' L'+xL+','+yFundo+' Q'+xL+','+(yFundo+cap)+' '+cx+','+(yFundo+cap)
-      +' Q'+xR+','+(yFundo+cap)+' '+xR+','+yFundo+' L'+xR+','+yN+' Z" fill="url(#hatch)"/>');
-    s.push('<line x1="'+xL+'" y1="'+yN+'" x2="'+xR+'" y2="'+yN+'" stroke="#2F9BD8" stroke-width="2.5"/>');
-    if(D.camara) s.push('<rect x="'+(xc-wc/2+2)+'" y="'+yN+'" width="'+(wc-4)+'" height="'+(yFundo-yN-14)+'" fill="url(#hatch)"/>');
+    s.push('<rect x="'+(xL+10)+'" y="'+yTopo+'" width="'+(wv-20)+'" height="'+Math.max(0,yN-yTopo)+'" fill="#8A6A3A" opacity=".30"/>');
+    s.push('<rect x="'+(xL+10)+'" y="'+yN+'" width="'+(wv-20)+'" height="'+Math.max(0,yFundo-yN)+'" fill="url(#water)" opacity=".88"/>');
+    s.push('<line x1="'+(xL+10)+'" y1="'+yN+'" x2="'+(xR-10)+'" y2="'+yN+'" stroke="#FFB020" stroke-width="2.5"/>');
+  } else if(fracLG > 0){
+    s.push('<rect x="'+(xL+10)+'" y="'+yN+'" width="'+(wv-20)+'" height="'+Math.max(0,yFundo-yN)+'" fill="url(#water)" opacity=".92"/>');
+    s.push('<line x1="'+(xL+10)+'" y1="'+yN+'" x2="'+(xR-10)+'" y2="'+yN+'" stroke="#62c9ff" stroke-width="2.5"/>');
   }
 
-  // ---- transmissor
-  var yT = Y(A.altBaixo ? -r.alt : r.alt);
-  var xT = cx - 205, wT = 54, hT = 30;
-  s.push('<rect x="'+(xT-wT/2)+'" y="'+(yT-hT/2)+'" width="'+wT+'" height="'+hT+'" rx="6" fill="#134963" stroke="#2F9BD8" stroke-width="1.8"/>');
-  s.push('<circle cx="'+xT+'" cy="'+yT+'" r="7.5" fill="none" stroke="#7CC4E8" stroke-width="1.4"/>');
-  s.push('<text x="'+xT+'" y="'+(yT+hT/2+14)+'" fill="#718E97" font-size="9.5" text-anchor="middle" letter-spacing="1.4" font-family="ui-monospace,Menlo,monospace">TRANSMISSOR</text>');
+  // DUAS RÉGUAS SEPARADAS PARA NÃO CONFUNDIR:
+  // 1) LG em porcentagem, por fora e bem encostado no vaso.
+  // 2) Distância física em milímetros, dentro do vaso.
+  // Ambas usam exatamente as mesmas referências: HP = 0% / 0 mm e LP = 100% / distância total.
 
-  var xHPin = D.camara ? (xc + wc/2) : xR;
-  var xTapH = xL, xTapL = xL;
+  // ---- LG (%) por fora do vaso
+  var xLG = xL - 13;
+  s.push('<line x1="'+xLG+'" y1="'+yLG100+'" x2="'+xLG+'" y2="'+yLG0+'" stroke="#2F9BD8" stroke-width="1.6"/>');
+  [0,.25,.5,.75,1].forEach(function(p){
+    var yy = yLG0-(yLG0-yLG100)*p;
+    s.push('<line x1="'+(xLG-5)+'" y1="'+yy+'" x2="'+(xLG+5)+'" y2="'+yy+'" stroke="#2F9BD8" stroke-width="1.1"/>');
+    s.push('<text x="'+(xLG-8)+'" y="'+(yy+3)+'" text-anchor="end" fill="#2F9BD8" font-size="9.5" font-weight="700" font-family="ui-monospace,Menlo,monospace">'+Math.round(p*100)+'%</text>');
+  });
+  s.push('<text x="'+xLG+'" y="'+(yLG100-16)+'" text-anchor="middle" fill="#2F9BD8" font-size="10" font-weight="700" font-family="ui-monospace,Menlo,monospace">LG</text>');
 
-  // ---- lado de alta
-  var yHP = D.camara ? yFundo - 16 : Y(0);
-  if(D.hp === "capilar"){
-    s.push('<line x1="'+xTapH+'" y1="'+yHP+'" x2="'+(xT+26)+'" y2="'+yHP+'" stroke="#3A5561" stroke-width="2.5"/>');
-    s.push('<path d="M'+(xT+26)+','+yHP+' Q'+(xT+14)+','+yHP+' '+(xT+14)+','+(yT+9)+' L'+(xT+wT/2)+','+(yT+9)+'" fill="none" stroke="#5A737E" stroke-width="2.5"/>');
-    s.push(flange(xTapH, yHP, -1));
+  // ---- régua física (mm) dentro do vaso
+  var xMM = xL + 28;
+  s.push('<line x1="'+xMM+'" y1="'+yLG100+'" x2="'+xMM+'" y2="'+yLG0+'" stroke="#d7e1e6" stroke-width="1.2" opacity=".88"/>');
+  [0,.25,.5,.75,1].forEach(function(p){
+    var yy = yLG0-(yLG0-yLG100)*p;
+    var mmLG = Math.round(lgGeom*p);
+    s.push('<line x1="'+xMM+'" y1="'+yy+'" x2="'+(xMM+8)+'" y2="'+yy+'" stroke="#d7e1e6" stroke-width="1" opacity=".88"/>');
+    s.push('<text x="'+(xMM+12)+'" y="'+(yy+3)+'" text-anchor="start" fill="#d7e1e6" font-size="9" font-family="ui-monospace,Menlo,monospace">'+mmLG+' mm</text>');
+  });
+  s.push('<text x="'+(xMM+2)+'" y="'+(yLG100-16)+'" text-anchor="start" fill="#d7e1e6" font-size="9.5" font-family="ui-monospace,Menlo,monospace">mm</text>');
+
+  // linhas-guia: reforçam que as duas réguas começam e terminam exatamente nas tomadas
+  s.push('<line x1="'+(xLG-2)+'" y1="'+yLG0+'" x2="'+(xR+30)+'" y2="'+yLG0+'" stroke="#ef5a4f" stroke-width="1" stroke-dasharray="4 4" opacity=".45"/>');
+  s.push('<line x1="'+(xLG-2)+'" y1="'+yLG100+'" x2="'+(xR+30)+'" y2="'+yLG100+'" stroke="#2F9BD8" stroke-width="1" stroke-dasharray="4 4" opacity=".40"/>');
+  // Marca separadamente o span configurado quando ele não coincide com a distância entre tomadas.
+  if(r.spn > 0 && lgGeom > 0 && Math.abs(r.spn-lgGeom) > 1){
+    var fSpan = Math.max(0, Math.min(1, r.spn/lgGeom));
+    var ySpanLG = yLG0-(yLG0-yLG100)*fSpan;
+    s.push('<line x1="'+(xL-12)+'" y1="'+ySpanLG+'" x2="'+(xR+20)+'" y2="'+ySpanLG+'" stroke="#FFB020" stroke-width="1.2" stroke-dasharray="5 4" opacity=".9"/>');
+    s.push('<text x="'+(xR+24)+'" y="'+(ySpanLG+3)+'" fill="#FFB020" font-size="9.5" font-family="ui-monospace,Menlo,monospace">SPAN '+Math.round(r.spn)+' mm</text>');
+  }
+
+  // bocais presos ao casco
+  function nozzle(y, cor, label){
+    s.push('<rect x="'+xR+'" y="'+(y-9)+'" width="18" height="18" rx="3" fill="#687983" stroke="#334953"/>');
+    s.push('<rect x="'+(xR+18)+'" y="'+(y-5)+'" width="12" height="10" rx="2" fill="#95a4ab" stroke="#334953"/>');
+    s.push('<text x="'+(xR+36)+'" y="'+(y-5)+'" fill="'+cor+'" font-size="11" font-weight="700" font-family="ui-monospace,Menlo,monospace">'+label+'</text>');
+  }
+  if(capilarVertical){
+    // Tomada LP vertical na cabeça do vaso
+    var xNV = cx;
+    s.push('<rect x="'+(xNV-7)+'" y="'+(yLPvis-20)+'" width="14" height="20" rx="3" fill="#687983" stroke="#334953"/>');
+    s.push('<rect x="'+(xNV-12)+'" y="'+(yLPvis-25)+'" width="24" height="7" rx="2" fill="#95a4ab" stroke="#334953"/>');
+    s.push('<text x="'+(xNV+20)+'" y="'+(yLPvis-13)+'" fill="#2F9BD8" font-size="11" font-weight="700" font-family="ui-monospace,Menlo,monospace">LP · BAIXA</text>');
+
+    // Tomada HP vertical no fundo do vaso
+    s.push('<rect x="'+(xNV-7)+'" y="'+yHPvis+'" width="14" height="20" rx="3" fill="#687983" stroke="#334953"/>');
+    s.push('<rect x="'+(xNV-12)+'" y="'+(yHPvis+18)+'" width="24" height="7" rx="2" fill="#95a4ab" stroke="#334953"/>');
+    s.push('<text x="'+(xNV+20)+'" y="'+(yHPvis+16)+'" fill="#ef5a4f" font-size="11" font-weight="700" font-family="ui-monospace,Menlo,monospace">HP · ALTA</text>');
   } else {
-    s.push('<path d="M'+xTapH+','+yHP+' L'+(xT+20)+','+yHP+' L'+(xT+20)+','+(yT+9)+' L'+(xT+wT/2)+','+(yT+9)+'" fill="none" stroke="#3A5561" stroke-width="2.5"/>');
-    s.push(flange(xTapH, yHP, -1));
-  }
-  s.push('<text x="'+(xTapH-14)+'" y="'+(yHP-7)+'" fill="#FFB020" font-size="10" text-anchor="end" font-family="ui-monospace,Menlo,monospace">ALTA</text>');
-
-  // ---- lado de baixa
-  var yLP;
-  if(D.lp === "aberto"){
-    yLP = yT - 4;
-    s.push('<line x1="'+(xT-wT/2)+'" y1="'+yLP+'" x2="'+(xT-42)+'" y2="'+yLP+'" stroke="#3A5561" stroke-width="2.5"/>');
-    s.push('<path d="M'+(xT-42)+','+yLP+' l-6,-5 M'+(xT-42)+','+yLP+' l-6,5" stroke="#5A737E" stroke-width="2" fill="none"/>');
-    s.push('<text x="'+(xT-50)+'" y="'+(yLP-8)+'" fill="#718E97" font-size="9.5" text-anchor="end" font-family="ui-monospace,Menlo,monospace">ATMOSFERA</text>');
-  } else if(D.lp === "capilar"){
-    yLP = Y(r.inf + r.vaso + r.sup);
-    s.push('<line x1="'+xTapL+'" y1="'+yLP+'" x2="'+(xT-4)+'" y2="'+yLP+'" stroke="#3A5561" stroke-width="2.5"/>');
-    s.push('<path d="M'+(xT-4)+','+yLP+' Q'+(xT-30)+','+yLP+' '+(xT-30)+','+(yT-9)+' L'+(xT-wT/2)+','+(yT-9)+'" fill="none" stroke="#5A737E" stroke-width="2.5"/>');
-    s.push(flange(xTapL, yLP, -1));
-    s.push('<text x="'+(xTapL-14)+'" y="'+(yLP-7)+'" fill="#7CC4E8" font-size="10" text-anchor="end" font-family="ui-monospace,Menlo,monospace">BAIXA</text>');
-  } else if(D.lp === "pote"){
-    yLP = Y(r.inf + r.vaso + r.pot);
-    var xp = xT - 6;
-    s.push('<line x1="'+xTapL+'" y1="'+yLP+'" x2="'+xp+'" y2="'+yLP+'" stroke="#3A5561" stroke-width="2.5"/>');
-    s.push('<rect x="'+(xp-19)+'" y="'+(yLP-15)+'" width="38" height="34" rx="6" fill="#0A1216" stroke="#3A5561" stroke-width="1.8"/>');
-    s.push('<rect x="'+(xp-17)+'" y="'+(yLP-1)+'" width="34" height="18" rx="4" fill="#2F9BD8" opacity=".3"/>');
-    s.push('<line x1="'+(xp-19)+'" y1="'+yLP+'" x2="'+(xp-27)+'" y2="'+yLP+'" stroke="#FFB020" stroke-width="2"/>');
-    s.push('<line x1="'+xp+'" y1="'+(yLP+19)+'" x2="'+xp+'" y2="'+(yT-9)+'" stroke="#5A737E" stroke-width="2.5"/>');
-    s.push('<line x1="'+xp+'" y1="'+(yT-9)+'" x2="'+(xT-wT/2)+'" y2="'+(yT-9)+'" stroke="#5A737E" stroke-width="2.5"/>');
-    s.push('<text x="'+(xp-31)+'" y="'+(yLP+4)+'" fill="#FFB020" font-size="9.5" text-anchor="end" font-family="ui-monospace,Menlo,monospace">0%</text>');
-    s.push('<text x="'+(xTapL-14)+'" y="'+(yLP-19)+'" fill="#7CC4E8" font-size="10" text-anchor="end" font-family="ui-monospace,Menlo,monospace">BAIXA</text>');
+    nozzle(yHP,'#ef5a4f','HP · ALTA');
+    if(D.lp !== 'aberto') nozzle(yLP,'#2F9BD8','LP · BAIXA');
   }
 
-  // ---- cotas
-  function cota(x, y1, y2, txt, lado){
-    if(Math.abs(y1-y2) < 13) return "";
-    var o = [];
-    o.push('<line x1="'+x+'" y1="'+y1+'" x2="'+x+'" y2="'+y2+'" stroke="#5A737E" stroke-width="1" marker-start="url(#a2)" marker-end="url(#a1)"/>');
-    o.push('<line x1="'+(x-5)+'" y1="'+y1+'" x2="'+(x+5)+'" y2="'+y1+'" stroke="#3A5561" stroke-width="1"/>');
-    o.push('<line x1="'+(x-5)+'" y1="'+y2+'" x2="'+(x+5)+'" y2="'+y2+'" stroke="#3A5561" stroke-width="1"/>');
-    var ym = (y1+y2)/2;
-    o.push('<text x="'+(x + (lado<0?-9:9))+'" y="'+(ym+3.5)+'" fill="#8AA2AC" font-size="10.5" text-anchor="'+(lado<0?"end":"start")+'" font-family="ui-monospace,Menlo,monospace">'+txt+'</text>');
-    return o.join("");
-  }
-  var xd = D.camara ? xc + wc/2 + 46 : xR + 46;
-  s.push(cota(xd, yFundo, yTopo, r.vaso+" vaso", 1));
-  if(r.inf > 0) s.push(cota(xd, Y(0), yFundo, r.inf+"", 1));
-  if((D.lp === "capilar") && r.sup > 0) s.push(cota(xd, yTopo, yLP, r.sup+"", 1));
-  if(D.hp === "capilar" || D.lp === "capilar"){
-    s.push(cota(xd + 62, Y(0), yLP, "sep "+Math.round(r.sep), 1));
-  }
-  if(r.spn > 0){
-    var ySpanTop = Y(r.inf + Math.min(r.spn, r.vaso));
-    s.push(cota(xL - 34, yFundo, ySpanTop, "span "+r.spn, -1));
+  // câmara externa, sem alterar o tamanho do vaso
+  if(D.camara){
+    var xc = xR+62, wc=24;
+    s.push('<rect x="'+(xc-wc/2)+'" y="'+(yLP-8)+'" width="'+wc+'" height="'+(yHP-yLP+16)+'" rx="6" fill="#0A1216" stroke="#526873" stroke-width="1.6"/>');
+    s.push('<line x1="'+xR+'" y1="'+(yLP+8)+'" x2="'+(xc-wc/2)+'" y2="'+(yLP+8)+'" stroke="#526873" stroke-width="3"/>');
+    s.push('<line x1="'+xR+'" y1="'+(yHP-8)+'" x2="'+(xc-wc/2)+'" y2="'+(yHP-8)+'" stroke="#526873" stroke-width="3"/>');
   }
 
-  return s.join("");
+  // posição visual do transmissor: move dentro de uma faixa própria, sem afetar o vaso
+  var yT;
+  if(A.altBaixo){
+    var fDown = Math.max(0, Math.min(1, r.alt / Math.max(r.vaso, 1)));
+    yT = yHPvis + 20 + fDown * 78;
+  } else {
+    var sepRef = Math.max(r.sep || (r.vaso+r.inf+r.sup), r.vaso, 1);
+    var fUp = Math.max(-0.25, Math.min(1.25, r.alt / sepRef));
+    yT = yHPvis - fUp * (yHPvis-yLPvis);
+    yT = Math.max(75, Math.min(398, yT));
+  }
+
+  // transmissor mais legível
+  s.push('<rect x="'+(xT-wT/2)+'" y="'+(yT-hT/2)+'" width="'+wT+'" height="'+hT+'" rx="7" fill="#15506d" stroke="#2F9BD8" stroke-width="1.8"/>');
+  s.push('<circle cx="'+xT+'" cy="'+yT+'" r="11" fill="#0b2634" stroke="#7CC4E8" stroke-width="1.5"/>');
+  s.push('<circle cx="'+xT+'" cy="'+yT+'" r="5" fill="none" stroke="#7CC4E8" stroke-width="1.2"/>');
+  s.push('<text x="'+xT+'" y="'+(yT+hT/2+15)+'" fill="#314b59" font-size="9.5" text-anchor="middle" letter-spacing="1.2" font-family="ui-monospace,Menlo,monospace">TRANSMISSOR</text>');
+
+  // conexões conforme arranjo
+  if(capilarVertical){
+    // LP: capilar sai da tomada superior, segue pela direita e chega ao lado de baixa do TX.
+    s.push('<path d="M'+cx+','+(yLPvis-25)+' L'+(xT+70)+','+(yLPvis-25)+' Q'+(xT+88)+','+(yLPvis-25)+' '+(xT+88)+','+(yT-9)+' L'+(xT+wT/2)+','+(yT-9)+'" fill="none" stroke="#2F9BD8" stroke-width="3"/>');
+    // HP: ligação direta sai da tomada inferior e chega ao lado de alta do TX.
+    s.push('<path d="M'+cx+','+(yHPvis+25)+' L'+(xT-62)+','+(yHPvis+25)+' Q'+(xT-46)+','+(yHPvis+25)+' '+(xT-46)+','+(yT+9)+' L'+(xT-wT/2)+','+(yT+9)+'" fill="none" stroke="#d34b42" stroke-width="3"/>');
+  } else {
+    if(D.hp === 'capilar'){
+      s.push('<path d="M'+(xR+30)+','+yHP+' C'+(xR+85)+','+yHP+' '+(xT-70)+','+(yT+9)+' '+(xT-wT/2)+','+(yT+9)+'" fill="none" stroke="#d34b42" stroke-width="3"/>');
+    } else {
+      s.push('<path d="M'+(xR+30)+','+yHP+' L'+(xT-55)+','+yHP+' L'+(xT-55)+','+(yT+9)+' L'+(xT-wT/2)+','+(yT+9)+'" fill="none" stroke="#526873" stroke-width="3"/>');
+    }
+
+    if(D.lp === 'aberto'){
+      s.push('<line x1="'+(xT+wT/2)+'" y1="'+(yT-8)+'" x2="'+(xT+64)+'" y2="'+(yT-8)+'" stroke="#526873" stroke-width="2.5"/>');
+      s.push('<text x="'+(xT+70)+'" y="'+(yT-4)+'" fill="#526873" font-size="9.5" font-family="ui-monospace,Menlo,monospace">ATM</text>');
+    } else if(D.lp === 'capilar'){
+      s.push('<path d="M'+(xR+30)+','+yLP+' C'+(xR+105)+','+yLP+' '+(xT-70)+','+(yT-9)+' '+(xT-wT/2)+','+(yT-9)+'" fill="none" stroke="#2F9BD8" stroke-width="3"/>');
+    } else if(D.lp === 'pote'){
+    var xp=xR+72, yp=yLP-2;
+    s.push('<line x1="'+(xR+30)+'" y1="'+yLP+'" x2="'+(xp-18)+'" y2="'+yLP+'" stroke="#526873" stroke-width="3"/>');
+    s.push('<rect x="'+(xp-18)+'" y="'+(yp-16)+'" width="36" height="34" rx="6" fill="#0A1216" stroke="#526873" stroke-width="1.7"/>');
+    s.push('<rect x="'+(xp-15)+'" y="'+yp+'" width="30" height="15" rx="4" fill="#2F9BD8" opacity=".30"/>');
+    s.push('<path d="M'+xp+','+(yp+18)+' L'+xp+','+(yT-9)+' L'+(xT-wT/2)+','+(yT-9)+'" fill="none" stroke="#2F9BD8" stroke-width="3"/>');
+    s.push('<text x="'+xp+'" y="'+(yp-24)+'" text-anchor="middle" fill="#526873" font-size="9" font-family="ui-monospace,Menlo,monospace">POTE</text>');
+    }
+  }
+
+  // cotas: linhas independentes do vaso; mostram valor real sem deslocar componentes
+  function cota(x, y1, y2, txt, cor){
+    if(Math.abs(y1-y2)<18) return;
+    s.push('<line x1="'+x+'" y1="'+y1+'" x2="'+x+'" y2="'+y2+'" stroke="'+(cor||'#718E97')+'" stroke-width="1" marker-start="url(#a2)" marker-end="url(#a1)"/>');
+    s.push('<text x="'+(x+8)+'" y="'+((y1+y2)/2+3)+'" fill="'+(cor||'#526873')+'" font-size="9.5" font-family="ui-monospace,Menlo,monospace">'+txt+'</text>');
+  }
+  cota(xL-72,yFundo,yTopo,'h vaso '+Math.round(r.vaso)+' mm');
+  if(D.lp==='capilar') cota(xR+118,yHPvis,yLPvis,'entre tomadas '+Math.round(r.sep)+' mm','#2F9BD8');
+  if(A.altBaixo) cota(xT+70,yHPvis,yT,'TX ↓ '+Math.round(r.alt)+' mm','#FFB020');
+  else cota(xT+70,yHPvis,yT,'TX '+Math.round(r.alt)+' mm','#FFB020');
+
+  return s.join('');
 }
+
 function flange(x, y, dir){
   return '<rect x="'+(x + (dir<0 ? -7 : 0))+'" y="'+(y-9)+'" width="7" height="18" fill="#3A5561"/>';
 }
@@ -649,6 +482,7 @@ function render(){
 
   // desenho
   $("svg").innerHTML = svgDraw(r);
+  syncVisualSliders(r);
 
   // conferência
   var medido = parseFloat($("med").value);
@@ -687,6 +521,39 @@ function render(){
   $("lblSpan").textContent = A.lblSpan || "Span · 0 a 100%";
   $("hintAlt").textContent = A.hintAlt || "";
   $("hintInf").textContent = A.hintInf || "";
+}
+
+
+/* ---------------- controles visuais do supervisório ---------------- */
+function syncVisualSliders(r){
+  var vLvl = $("vLvl"), vAlt = $("vAlt"), pct = $("liveLevelPct"), note = $("physNote");
+  if(vLvl){
+    var lgMax = getLGRange(r);
+    vLvl.max = lgMax;
+    vLvl.value = Math.max(0, Math.min(lgMax, r.nivel));
+  }
+  if(vAlt){
+    if(atual === "remoto"){
+      vAlt.min = 0;
+      vAlt.max = Math.max(1, r.sep);
+      if(r.alt < 0){ $("alt").value = 0; $("oAlt").value = 0; }
+      if(r.alt > r.sep){ $("alt").value = r.sep; $("oAlt").value = r.sep; }
+      vAlt.value = Math.max(0, Math.min(r.sep, num("alt")));
+    } else {
+      vAlt.min = $("alt").min;
+      vAlt.max = $("alt").max;
+      vAlt.value = r.alt;
+    }
+  }
+  if(pct){
+    var lgMaxPct = getLGRange(r);
+    pct.textContent = (lgMaxPct ? Math.max(0, Math.min(100, r.nivel/lgMaxPct*100)) : 0).toFixed(1).replace('.',',') + '%';
+  }
+  if(note){
+    note.textContent = atual === "remoto"
+      ? "Dois selos remotos: mover o corpo do transmissor entre as tomadas altera o desenho, mas não altera a PV; as colunas do mesmo fluido de enchimento se compensam no ΔP."
+      : (r.A.hintAlt || "A posição do transmissor participa do cálculo conforme o arranjo selecionado.");
+  }
 }
 
 /* ---------------- visibilidade por arranjo ---------------- */
@@ -768,7 +635,7 @@ ordem.forEach(function(k){
   var A = ARR[k];
   var b = document.createElement("button");
   b.type = "button"; b.className = "arr"; b.dataset.k = k;
-  b.innerHTML = "<b>" + A.nome + "</b><span>" + A.sub + "</span>";
+  b.innerHTML = "<b>" + A.nome + "</b><span>" + A.sub + "</span>"; b.setAttribute("aria-label", A.nome + ". " + A.sub);
   b.addEventListener("click", function(){ atual = k; aplicaArranjo(); });
   $("arrs").appendChild(b);
 });
@@ -794,9 +661,11 @@ function sincroniza(k){
     if(k === "inf"){ $("sup").value = $("inf").value; $("oSup").value = $("inf").value; }
     if(k === "sup"){ $("inf").value = $("sup").value; $("oInf").value = $("sup").value; }
   }
-  // nível não passa do vaso; span não passa do vaso
-  var vaso = num("vas");
-  $("lvl").max = vaso; if(num("lvl") > vaso){ $("lvl").value = vaso; $("oLvl").value = vaso; }
+  // LG vai de 0 a 100% ENTRE AS TOMADAS, não do fundo ao topo do vaso.
+  var rr = calc();
+  var lgMax = getLGRange(rr);
+  $("lvl").max = lgMax;
+  if(num("lvl") > lgMax){ $("lvl").value = lgMax; $("oLvl").value = lgMax; }
 }
 
 DENSF.forEach(function(k){ $(k).addEventListener("input", render); });
@@ -839,6 +708,18 @@ $("btnSave").addEventListener("click", function(){
 $("btnNew").addEventListener("click", function(){
   $("tagName").value = ""; pintaSalvos(); $("tagName").focus();
 });
+
+
+if($("vLvl")){
+  $("vLvl").addEventListener("input", function(){
+    $("lvl").value = this.value; $("oLvl").value = this.value; render();
+  });
+}
+if($("vAlt")){
+  $("vAlt").addEventListener("input", function(){
+    $("alt").value = this.value; $("oAlt").value = this.value; render();
+  });
+}
 
 pintaSalvos();
 aplicaArranjo();
