@@ -49,6 +49,9 @@ input[type=range]{width:100%;accent-color:var(--blue)}
 @media(max-width:1180px){.workspace{grid-template-columns:280px 1fr}.rightcol{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr}.rightcol>.panel:last-child{grid-column:1/-1}}
 @media(max-width:780px){.workspace{grid-template-columns:1fr}.draw{height:500px}.arr-caption{align-items:flex-start;flex-direction:column}.arr{min-width:142px}.rightcol{display:flex;flex-direction:column}.rightcol>.panel:last-child{grid-column:auto}}
 
+input[type=range].hideslider{display:none}
+.spanunit{display:flex;gap:6px;margin-top:8px}.spanunit button{flex:1;background:#081521;border:1px solid var(--line);color:#9fb5c4;border-radius:7px;padding:7px 6px;font-size:10.5px;cursor:pointer}.spanunit button.on{border-color:var(--blue);color:var(--cyan);background:#0b2940}
+.lgquick{display:flex;gap:5px;margin-bottom:9px}.lgquick button{flex:1;background:#081521;border:1px solid var(--line);color:#9fb5c4;border-radius:7px;padding:7px 4px;font-size:11px;cursor:pointer}.lgquick button:active{border-color:var(--green);color:var(--green)}
 </style>
 </head>
 <body>
@@ -63,9 +66,9 @@ input[type=range]{width:100%;accent-color:var(--blue)}
   <main class="workspace">
     <aside class="leftcol">
       <section class="panel"><div class="panel-title">CONFIGURAÇÃO DO VASO</div><div class="panel-body">
-        <div class="ctl" data-f="vaso"><div class="top"><label for="vas">Altura útil do vaso</label><span><input type="number" class="numbox amber" id="oVas" value="900" min="100" max="6000" step="1"><span class="unitmm">mm</span></span></div><input type="range" id="vas" min="100" max="4000" step="1" value="900"></div>
-        <div class="ctl" data-f="span"><div class="top"><label for="spn" id="lblSpan">Span · 0 a 100%</label><span><input type="number" class="numbox amber" id="oSpn" value="850" min="10" max="6000" step="1"><span class="unitmm">mm</span></span></div><input type="range" id="spn" min="10" max="4000" step="1" value="850"></div>
-        <div class="ctl" data-f="nivel"><div class="top"><label for="lvl">LG · nível de produto (0–100%)</label><span><input type="number" class="numbox" id="oLvl" value="0" min="0" step="1"><span class="unitmm">mm</span></span></div><input type="range" id="lvl" min="0" max="900" step="1" value="0"></div>
+        <div class="ctl" data-f="vaso"><div class="top"><label for="vas">Altura útil do vaso</label><span><input type="number" class="numbox amber" id="oVas" value="900" min="100" max="6000" step="1"><span class="unitmm">mm</span></span></div><input type="range" id="vas" min="100" max="4000" step="1" value="900" class="hideslider"></div>
+        <div class="ctl" data-f="span"><div class="top"><label for="spn" id="lblSpan">Span · 0 a 100%</label><span><input type="number" class="numbox amber" id="oSpn" value="850" min="10" max="6000" step="1"><span class="unitmm" id="spnUnitLbl">mm</span></span></div><input type="range" id="spn" min="10" max="4000" step="1" value="850" class="hideslider"><div class="spanunit" id="spanUnitBtns"><button type="button" class="on" data-u="mm">mm · físico</button><button type="button" data-u="mmh2o">mmH₂O · da folha de dados</button></div></div>
+        <div class="ctl" data-f="nivel"><div class="top"><label for="lvl">LG · nível de produto (0–100%)</label><span><input type="number" class="numbox" id="oLvl" value="0" min="0" step="1"><span class="unitmm">mm</span></span></div><div class="lgquick" id="lgQuick"><button type="button" data-p="0">0%</button><button type="button" data-p="25">25%</button><button type="button" data-p="50">50%</button><button type="button" data-p="75">75%</button><button type="button" data-p="100">100%</button></div><input type="range" id="lvl" min="0" max="900" step="1" value="0"></div>
       </div></section>
 
       <section class="panel"><div class="panel-title">GEOMETRIA / TRANSMISSOR</div><div class="panel-body">
@@ -149,30 +152,14 @@ var ARR = {
   remoto:{
     nome:"Dois selos remotos",
     sub:"Capilar nos dois lados",
-    campos:["nivel","vaso","inf","sup","alt","span","dens","med"],
+    campos:["nivel","vaso","alt","span","dens","med"],
     dens:["prod","fill"],
-    lblInf:"Selo de alta abaixo do fundo",
-    lblSup:"Selo de baixa acima do topo",
     lblAlt:"Altura do transmissor",
     hintAlt:"Os dois capilares sobem juntos: mexer na altura não altera o zero. Arraste e confira.",
-    hintInf:"Os bocais costumam ser simétricos — sobem e descem junto.",
-    desenho:{lp:"capilar",hp:"capilar",camara:false},
-    simetrico:true
-  },
-  capilarLP:{
-    nome:"Selo direto na alta, capilar na baixa",
-    sub:"Transmissor flangeado no bocal",
-    campos:["nivel","vaso","inf","sup","alt","span","dens","med"],
-    dens:["prod","fill"],
-    lblInf:"Selo de alta abaixo do fundo",
-    lblSup:"Selo de baixa acima do topo",
-    lblAlt:"Altura do transmissor",
-    hintAlt:"Aqui a altura importa: só o lado de baixa tem coluna de capilar, não tem o que compensar.",
-    hintInf:"O selo está flangeado no bocal, então esse trecho de produto entra como supressão.",
-    desenho:{lp:"capilar",hp:"direto",camara:false}
+    desenho:{lp:"capilar",hp:"capilar",camara:false}
   },
   pernaumida:{
-    nome:"Perna úmida com pote",
+    nome:"Perna com supressão e elevação",
     sub:"Vapor condensável, pote de selagem",
     campos:["nivel","vaso","inf","pote","alt","span","dens","med"],
     dens:["prod","sel"],
@@ -184,7 +171,7 @@ var ARR = {
     altBaixo:true
   },
   interface:{
-    nome:"Interface entre dois líquidos",
+    nome:"Selo com interface",
     sub:"Faixa medida entre as tomadas",
     campos:["nivel","vaso","inf","alt","span","dens","med"],
     dens:["leve","pes"],
@@ -197,13 +184,14 @@ var ARR = {
     altBaixo:true, iface:true
   }
 };
-var ordem = ["remoto","capilarLP","pernaumida"];
+var ordem = ["remoto","pernaumida","interface"];
 var atual = "remoto";
 
 /* ---------------- pares slider + caixa ---------------- */
 var PARES = [["lvl","oLvl"],["vas","oVas"],["inf","oInf"],["sup","oSup"],
              ["alt","oAlt"],["pot","oPot"],["spn","oSpn"]];
 var cond = "seco";
+var spanUnit = "mm";
 
 /* densidade de enchimento que reproduziria a medição */
 function densQueFecha(r, medido){
@@ -233,14 +221,10 @@ function calc(){
     supr = (inf + alt) * dP;
   }
   else if(atual === "remoto"){
-    sep  = vaso + inf + sup;
+    inf = 0; sup = 0;
+    sep  = vaso;
     elev = -sep * dF;
-    supr = inf * dP;
-  }
-  else if(atual === "capilarLP"){
-    sep  = vaso + inf + sup;
-    elev = -(sep - alt) * dF;
-    supr = inf * dP;
+    supr = 0;
   }
   else if(atual === "pernaumida"){
     sep  = vaso + pot + alt;
@@ -253,14 +237,15 @@ function calc(){
     densMedida = dQ - dL;
   }
 
+  var spnMM = (spanUnit === "mmh2o") ? (densMedida ? spn / densMedida : 0) : spn;
   var LRV  = elev + supr;
-  var span = spn * densMedida;
+  var span = (spanUnit === "mmh2o") ? spn : spn * densMedida;
   var URV  = LRV + span;
-  var PV   = LRV + Math.min(nivel, spn) * densMedida;
+  var PV   = LRV + Math.min(nivel, spnMM) * densMedida;
   var pc   = span !== 0 ? (PV - LRV) / span * 100 : 0;
   var ma   = 4 + 16 * pc / 100;
 
-  return {A:A, vaso:vaso, inf:inf, sup:sup, alt:alt, pot:pot, spn:spn, nivel:nivel,
+  return {A:A, vaso:vaso, inf:inf, sup:sup, alt:alt, pot:pot, spn:spn, spnMM:spnMM, nivel:nivel,
           dP:dP, dF:dF, dS:dS, dL:dL, dQ:dQ,
           elev:elev, supr:supr, sep:sep, densCol:densCol, densMedida:densMedida,
           LRV:LRV, URV:URV, span:span, PV:PV, pc:pc, ma:ma};
@@ -355,11 +340,11 @@ function svgDraw(r){
   s.push('<line x1="'+(xLG-2)+'" y1="'+yLG0+'" x2="'+(xR+30)+'" y2="'+yLG0+'" stroke="#ef5a4f" stroke-width="1" stroke-dasharray="4 4" opacity=".45"/>');
   s.push('<line x1="'+(xLG-2)+'" y1="'+yLG100+'" x2="'+(xR+30)+'" y2="'+yLG100+'" stroke="#2F9BD8" stroke-width="1" stroke-dasharray="4 4" opacity=".40"/>');
   // Marca separadamente o span configurado quando ele não coincide com a distância entre tomadas.
-  if(r.spn > 0 && lgGeom > 0 && Math.abs(r.spn-lgGeom) > 1){
-    var fSpan = Math.max(0, Math.min(1, r.spn/lgGeom));
+  if(r.spnMM > 0 && lgGeom > 0 && Math.abs(r.spnMM-lgGeom) > 1){
+    var fSpan = Math.max(0, Math.min(1, r.spnMM/lgGeom));
     var ySpanLG = yLG0-(yLG0-yLG100)*fSpan;
     s.push('<line x1="'+(xL-12)+'" y1="'+ySpanLG+'" x2="'+(xR+20)+'" y2="'+ySpanLG+'" stroke="#FFB020" stroke-width="1.2" stroke-dasharray="5 4" opacity=".9"/>');
-    s.push('<text x="'+(xR+24)+'" y="'+(ySpanLG+3)+'" fill="#FFB020" font-size="9.5" font-family="ui-monospace,Menlo,monospace">SPAN '+Math.round(r.spn)+' mm</text>');
+    s.push('<text x="'+(xR+24)+'" y="'+(ySpanLG+3)+'" fill="#FFB020" font-size="9.5" font-family="ui-monospace,Menlo,monospace">SPAN '+Math.round(r.spnMM)+' mm</text>');
   }
 
   // bocais presos ao casco
@@ -467,7 +452,7 @@ function render(){
   $("hSPN").textContent = br(r.span, 1);
   $("hLRVmm").textContent = r.densCol ? br(r.LRV / r.densMedida, 0)+" mm" : "";
   $("hURVmm").textContent = r.densMedida ? br(r.URV / r.densMedida, 0)+" mm" : "";
-  $("hSPNmm").textContent = r.spn + " mm";
+  $("hSPNmm").textContent = br(r.spnMM,0) + " mm";
   $("hMA").textContent  = br(Math.max(3.8, Math.min(20.5, r.ma)), 2);
   $("hPC").textContent  = br(r.pc, 0);
   var w = Math.max(0, Math.min(100, r.pc));
@@ -677,6 +662,33 @@ Array.prototype.forEach.call(document.querySelectorAll(".cbtn"), function(b){
       x.classList.toggle("on", x.dataset.c === cond);
     });
     render();
+  });
+});
+
+Array.prototype.forEach.call(document.querySelectorAll("#spanUnitBtns button"), function(b){
+  b.addEventListener("click", function(){
+    var novo = b.dataset.u;
+    if(novo === spanUnit) return;
+    var r = calc();
+    var atual2 = num("spn");
+    var convertido = (novo === "mmh2o") ? atual2 * r.densMedida : (r.densMedida ? atual2 / r.densMedida : atual2);
+    spanUnit = novo;
+    $("spn").value = convertido; $("oSpn").value = Math.round(convertido * 100) / 100;
+    $("spnUnitLbl").textContent = (spanUnit === "mmh2o") ? "mmH₂O" : "mm";
+    Array.prototype.forEach.call(document.querySelectorAll("#spanUnitBtns button"), function(x){
+      x.classList.toggle("on", x.dataset.u === spanUnit);
+    });
+    render();
+  });
+});
+
+Array.prototype.forEach.call(document.querySelectorAll("#lgQuick button"), function(b){
+  b.addEventListener("click", function(){
+    var pct = +b.dataset.p;
+    var max = +$("lvl").max || num("vas");
+    var v = Math.round(max * pct / 100);
+    $("lvl").value = v; $("oLvl").value = v;
+    sincroniza("lvl"); render();
   });
 });
 
