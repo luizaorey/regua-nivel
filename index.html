@@ -167,7 +167,7 @@ var ARR = {
     lblAlt:"Transmissor abaixo da tomada de alta",
     hintAlt:"A perna de alta abaixo da tomada soma produto; a perna de baixa continua cheia de selagem.",
     hintInf:"O trecho entre o bocal e o fundo fica sempre cheio de produto: é a supressão.",
-    desenho:{lp:"pote",hp:"direto",camara:false},
+    desenho:{lp:"capilar",hp:"direto",camara:false},
     altBaixo:true
   },
   interface:{
@@ -271,7 +271,7 @@ function svgDraw(r){
   var yHP = 326, yLP = 112;                    // bocais laterais padrão
   // No arranjo "Selo direto na alta / capilar na baixa", somente o desenho muda:
   // LP fica na cabeça superior do vaso e HP no fundo inferior. Cálculos permanecem intactos.
-  var capilarVertical = (atual === "capilarLP");
+  var capilarVertical = (atual === "pernaumida");
   var yHPvis = capilarVertical ? (yFundo + cap) : yHP;
   var yLPvis = capilarVertical ? (yTopo - cap) : yLP;
   var xT = 505, wT = 58, hT = 34;
