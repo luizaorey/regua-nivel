@@ -165,7 +165,7 @@ var ARR = {
     dens:["prod","sel"],
     lblInf:"Tomada de alta abaixo do fundo",
     lblAlt:"Transmissor abaixo da tomada de alta",
-    hintAlt:"A perna de alta abaixo da tomada soma produto; a perna de baixa continua cheia de selagem.",
+    hintAlt:"Os dois lados têm capilar: mexer na altura do transmissor não altera o zero. Arraste e confira.",
     hintInf:"O trecho entre o bocal e o fundo fica sempre cheio de produto: é a supressão.",
     desenho:{lp:"capilar",hp:"direto",camara:false},
     altBaixo:true
@@ -227,9 +227,9 @@ function calc(){
     supr = 0;
   }
   else if(atual === "pernaumida"){
-    sep  = vaso + pot + alt;
+    sep  = vaso + pot;
     elev = -sep * dS;
-    supr = (inf + alt) * dP;
+    supr = inf * dP;
     densCol = dS;
   }
   else if(atual === "interface"){
