@@ -75,7 +75,7 @@ input[type=range].hideslider{display:none}
         <div class="ctl" data-f="inf"><div class="top"><label for="inf" id="lblInf">Tomada inferior</label><span><input type="number" class="numbox amber" id="oInf" value="400" min="0" max="3000" step="1"><span class="unitmm">mm</span></span></div><input type="range" id="inf" min="0" max="2000" step="1" value="400"><div class="hint" id="hintInf"></div></div>
         <div class="ctl" data-f="sup"><div class="top"><label for="sup" id="lblSup">Tomada superior</label><span><input type="number" class="numbox amber" id="oSup" value="400" min="0" max="3000" step="1"><span class="unitmm">mm</span></span></div><input type="range" id="sup" min="0" max="2000" step="1" value="400"></div>
         <div class="ctl" data-f="alt"><div class="top"><label for="alt" id="lblAlt">Altura do transmissor</label><span><input type="number" class="numbox" id="oAlt" value="700" min="-3000" max="4000" step="1"><span class="unitmm">mm</span></span></div><input type="range" id="alt" min="-1500" max="3000" step="1" value="700"><div class="hint" id="hintAlt"></div></div>
-        <div class="ctl" data-f="pote"><div class="top"><label for="pot">Pote de selagem acima do topo</label><span><input type="number" class="numbox amber" id="oPot" value="300" min="0" max="3000" step="1"><span class="unitmm">mm</span></span></div><input type="range" id="pot" min="0" max="2000" step="1" value="300"><div class="hint">Referência no furo lateral do pote.</div></div>
+        <div class="ctl" data-f="pote"><div class="top"><label for="pot">Tomada de baixa acima do topo</label><span><input type="number" class="numbox amber" id="oPot" value="300" min="0" max="3000" step="1"><span class="unitmm">mm</span></span></div><input type="range" id="pot" min="0" max="2000" step="1" value="300"><div class="hint">Os bocais costumam ser simétricos — sobem e descem junto.</div></div>
       </div></section>
 
       <section class="panel"><div class="panel-title">DENSIDADES</div><div class="panel-body"><div class="ctl" data-f="dens"><div class="dens">
@@ -160,7 +160,7 @@ var ARR = {
   },
   pernaumida:{
     nome:"Perna com supressão e elevação",
-    sub:"Vapor condensável, pote de selagem",
+    sub:"Duas tomadas com flange, capilar nos dois lados",
     campos:["nivel","vaso","inf","pote","alt","span","dens","med"],
     dens:["prod","sel"],
     lblInf:"Tomada de alta abaixo do fundo",
