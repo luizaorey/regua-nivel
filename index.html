@@ -171,16 +171,14 @@ var ARR = {
   },
   interface:{
     nome:"Selo com interface",
-    sub:"Faixa medida entre as tomadas",
-    campos:["nivel","vaso","inf","alt","span","dens","med"],
-    dens:["leve","pes"],
-    lblInf:"Tomada de alta abaixo do fundo",
-    lblAlt:"Transmissor abaixo da tomada de alta",
+    sub:"Capilar na tomada, faixa entre líquido leve e pesado",
+    campos:["nivel","vaso","alt","span","dens","med"],
+    dens:["leve","pes","fill"],
+    lblAlt:"Altura do transmissor",
     lblSpan:"Faixa medida · 0 a 100%",
-    hintAlt:"Abaixo da tomada de alta a perna fica cheia do líquido pesado.",
-    hintInf:"Trecho sempre alagado, entra como supressão com a densidade do pesado.",
-    desenho:{lp:"aberto",hp:"direto",camara:false},
-    altBaixo:true, iface:true
+    hintAlt:"É capilar: mexer na altura do transmissor não altera o zero. Arraste e confira.",
+    desenho:{lp:"aberto",hp:"capilar",camara:false},
+    iface:true
   }
 };
 var ordem = ["remoto","pernaumida","interface"];
@@ -232,7 +230,10 @@ function calc(){
     densCol = dS;
   }
   else if(atual === "interface"){
-    supr = (inf + alt) * dQ + spn * dL;
+    inf = 0;
+    sep  = spn;
+    elev = -spn * dF;
+    supr = spn * dL;
     densMedida = dQ - dL;
   }
 
@@ -511,7 +512,7 @@ function syncVisualSliders(r){
     vLvl.value = Math.max(0, Math.min(lgMax, r.nivel));
   }
   if(vAlt){
-    if(atual === "remoto" || atual === "pernaumida"){
+    if(atual === "remoto" || atual === "pernaumida" || atual === "interface"){
       vAlt.min = 0;
       vAlt.max = Math.max(1, r.sep);
       if(r.alt < 0){ $("alt").value = 0; $("oAlt").value = 0; }
