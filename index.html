@@ -179,9 +179,20 @@ var ARR = {
     hintAlt:"É capilar: mexer na altura do transmissor não altera o zero. Arraste e confira.",
     desenho:{lp:"aberto",hp:"capilar",camara:false},
     iface:true
+  },
+  interface2:{
+    nome:"Interface · duas tomadas",
+    sub:"Selo capilar nas duas tomadas",
+    campos:["nivel","vaso","alt","span","dens","med"],
+    dens:["leve","pes","fill"],
+    lblAlt:"Altura do transmissor",
+    lblSpan:"Faixa medida · 0 a 100%",
+    hintAlt:"É capilar nas duas tomadas: mexer na altura do transmissor não altera o zero. Arraste e confira.",
+    desenho:{lp:"capilar",hp:"capilar",camara:false},
+    iface:true
   }
 };
-var ordem = ["remoto","pernaumida","interface"];
+var ordem = ["remoto","pernaumida","interface","interface2"];
 var atual = "remoto";
 
 /* ---------------- pares slider + caixa ---------------- */
@@ -229,7 +240,7 @@ function calc(){
     supr = inf * dP;
     densCol = dS;
   }
-  else if(atual === "interface"){
+  else if(atual === "interface" || atual === "interface2"){
     inf = 0;
     sep  = spn;
     elev = -spn * dF;
@@ -255,6 +266,8 @@ function calc(){
 function getLGRange(r){
   // Nosso padrão: o nível de produto vai de 0 até a altura do vaso, sempre —
   // independente do arranjo (a distância entre tomadas não entra aqui).
+  // Exceção: na interface, o LG é a posição da interface dentro da faixa medida (span), não a altura do vaso.
+  if(atual === "interface" || atual === "interface2") return Math.max(1, r.spnMM);
   return Math.max(1, r.vaso);
 }
 
@@ -512,7 +525,7 @@ function syncVisualSliders(r){
     vLvl.value = Math.max(0, Math.min(lgMax, r.nivel));
   }
   if(vAlt){
-    if(atual === "remoto" || atual === "pernaumida" || atual === "interface"){
+    if(atual === "remoto" || atual === "pernaumida" || atual === "interface" || atual === "interface2"){
       vAlt.min = 0;
       vAlt.max = Math.max(1, r.sep);
       if(r.alt < 0){ $("alt").value = 0; $("oAlt").value = 0; }
