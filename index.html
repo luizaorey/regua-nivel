@@ -315,9 +315,9 @@ function svgDraw(r){
   var yLG100 = yLPvis;
   var yN = yLG0 - (yLG0-yLG100) * fracLG;
   if(A.iface){
-    s.push('<rect x="'+(xL+10)+'" y="'+yTopo+'" width="'+(wv-20)+'" height="'+Math.max(0,yN-yTopo)+'" fill="#8A6A3A" opacity=".30"/>');
-    s.push('<rect x="'+(xL+10)+'" y="'+yN+'" width="'+(wv-20)+'" height="'+Math.max(0,yFundo-yN)+'" fill="url(#water)" opacity=".88"/>');
-    s.push('<line x1="'+(xL+10)+'" y1="'+yN+'" x2="'+(xR-10)+'" y2="'+yN+'" stroke="#FFB020" stroke-width="2.5"/>');
+    s.push('<rect x="'+(xL+10)+'" y="'+yTopo+'" width="'+(wv-20)+'" height="'+Math.max(0,yN-yTopo)+'" fill="#FFB020" opacity=".80"/>');
+    s.push('<rect x="'+(xL+10)+'" y="'+yN+'" width="'+(wv-20)+'" height="'+Math.max(0,yFundo-yN)+'" fill="url(#water)" opacity=".92"/>');
+    s.push('<line x1="'+(xL+10)+'" y1="'+yN+'" x2="'+(xR-10)+'" y2="'+yN+'" stroke="#0b2634" stroke-width="2.5"/>');
   } else if(fracLG > 0){
     s.push('<rect x="'+(xL+10)+'" y="'+yN+'" width="'+(wv-20)+'" height="'+Math.max(0,yFundo-yN)+'" fill="url(#water)" opacity=".92"/>');
     s.push('<line x1="'+(xL+10)+'" y1="'+yN+'" x2="'+(xR-10)+'" y2="'+yN+'" stroke="#62c9ff" stroke-width="2.5"/>');
