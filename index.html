@@ -71,7 +71,7 @@ input[type=range].hideslider{display:none}
         <div class="ctl" data-f="nivel"><div class="top"><label for="lvl">LG · nível de produto (0–100%)</label><span><input type="number" class="numbox" id="oLvl" value="0" min="0" step="1"><span class="unitmm">mm</span></span></div><div class="lgquick" id="lgQuick"><button type="button" data-p="0">0%</button><button type="button" data-p="25">25%</button><button type="button" data-p="50">50%</button><button type="button" data-p="75">75%</button><button type="button" data-p="100">100%</button></div><input type="range" id="lvl" min="0" max="900" step="1" value="0"></div>
       </div></section>
 
-      <section class="panel"><div class="panel-title">GEOMETRIA / TRANSMISSOR</div><div class="panel-body">
+      <section class="panel" id="panGeo"><div class="panel-title">GEOMETRIA / TRANSMISSOR</div><div class="panel-body">
         <div class="ctl" data-f="inf"><div class="top"><label for="inf" id="lblInf">Tomada inferior</label><span><input type="number" class="numbox amber" id="oInf" value="400" min="0" max="3000" step="1"><span class="unitmm">mm</span></span></div><input type="range" id="inf" min="0" max="2000" step="1" value="400"><div class="hint" id="hintInf"></div></div>
         <div class="ctl" data-f="sup"><div class="top"><label for="sup" id="lblSup">Tomada superior</label><span><input type="number" class="numbox amber" id="oSup" value="400" min="0" max="3000" step="1"><span class="unitmm">mm</span></span></div><input type="range" id="sup" min="0" max="2000" step="1" value="400"></div>
         <div class="ctl" data-f="alt"><div class="top"><label for="alt" id="lblAlt">Altura do transmissor</label><span><input type="number" class="numbox" id="oAlt" value="700" min="-3000" max="4000" step="1"><span class="unitmm">mm</span></span></div><input type="range" id="alt" min="-1500" max="3000" step="1" value="700"><div class="hint" id="hintAlt"></div></div>
@@ -152,7 +152,7 @@ var ARR = {
   remoto:{
     nome:"Dois selos remotos",
     sub:"Capilar nos dois lados",
-    campos:["nivel","vaso","alt","span","dens","med"],
+    campos:["nivel","vaso","span","dens","med"],
     dens:["prod","fill"],
     lblAlt:"Altura do transmissor",
     hintAlt:"Os dois capilares sobem juntos: mexer na altura não altera o zero. Arraste e confira.",
@@ -161,7 +161,7 @@ var ARR = {
   pernaumida:{
     nome:"Perna com supressão e elevação",
     sub:"Duas tomadas com flange, capilar nos dois lados",
-    campos:["nivel","vaso","inf","pote","alt","span","dens","med"],
+    campos:["nivel","vaso","inf","pote","span","dens","med"],
     dens:["prod","sel"],
     lblInf:"Tomada de alta abaixo do fundo",
     lblAlt:"Altura do transmissor",
@@ -172,7 +172,7 @@ var ARR = {
   interface:{
     nome:"Selo com interface",
     sub:"Capilar na tomada, faixa entre líquido leve e pesado",
-    campos:["nivel","vaso","alt","span","dens","med"],
+    campos:["nivel","vaso","span","dens","med"],
     dens:["leve","pes","fill"],
     lblAlt:"Altura do transmissor",
     lblSpan:"Faixa medida · 0 a 100%",
@@ -183,7 +183,7 @@ var ARR = {
   interface2:{
     nome:"Interface · duas tomadas",
     sub:"Selo capilar nas duas tomadas",
-    campos:["nivel","vaso","alt","span","dens","med"],
+    campos:["nivel","vaso","span","dens","med"],
     dens:["leve","pes","fill"],
     lblAlt:"Altura do transmissor",
     lblSpan:"Faixa medida · 0 a 100%",
@@ -558,6 +558,8 @@ function aplicaArranjo(){
     if(el.tagName === "LABEL") el.style.display = A.dens.indexOf(el.dataset.d) >= 0 ? "" : "none";
   });
   $("presFill").style.display = (A.dens.indexOf("fill") >= 0) ? "" : "none";
+  var geoVisivel = ["inf","sup","alt","pote"].some(function(f){ return A.campos.indexOf(f) >= 0; });
+  $("panGeo").style.display = geoVisivel ? "" : "none";
   var alt = $("alt");
   if(A.altBaixo){ alt.min = 0; if(+alt.value < 0){ alt.value = 0; $("oAlt").value = 0; } }
   else { alt.min = -1500; }
