@@ -50,6 +50,7 @@ input[type=range]{width:100%;accent-color:var(--blue)}
 @media(max-width:780px){.workspace{grid-template-columns:1fr}.draw{height:500px}.arr-caption{align-items:flex-start;flex-direction:column}.arr{min-width:142px}.rightcol{display:flex;flex-direction:column}.rightcol>.panel:last-child{grid-column:auto}}
 
 input[type=range].hideslider{display:none}
+.dgh{font-size:10px;letter-spacing:.1em;color:#7f97a8;text-transform:uppercase;margin:2px 0 8px}.dgrp{margin-top:14px;padding-top:10px;border-top:1px solid rgba(35,56,75,.7)}.dens{grid-template-columns:1fr!important}.prodpres{margin-top:4px}.prodpres button{padding:5px 8px;font-size:10.5px}
 .spanunit{display:flex;gap:6px;margin-top:8px}.spanunit button{flex:1;background:#081521;border:1px solid var(--line);color:#9fb5c4;border-radius:7px;padding:7px 6px;font-size:10.5px;cursor:pointer}.spanunit button.on{border-color:var(--blue);color:var(--cyan);background:#0b2940}
 .lgquick{display:flex;gap:5px;margin-bottom:9px}.lgquick button{flex:1;background:#081521;border:1px solid var(--line);color:#9fb5c4;border-radius:7px;padding:7px 4px;font-size:11px;cursor:pointer}.lgquick button:active{border-color:var(--green);color:var(--green)}
 </style>
@@ -78,13 +79,18 @@ input[type=range].hideslider{display:none}
         <div class="ctl" data-f="pote"><div class="top"><label for="pot">Tomada de baixa acima do topo</label><span><input type="number" class="numbox amber" id="oPot" value="300" min="0" max="3000" step="1"><span class="unitmm">mm</span></span></div><input type="range" id="pot" min="0" max="2000" step="1" value="300"><div class="hint">Os bocais costumam ser simétricos — sobem e descem junto.</div></div>
       </div></section>
 
-      <section class="panel"><div class="panel-title">DENSIDADES</div><div class="panel-body"><div class="ctl" data-f="dens"><div class="dens">
+      <section class="panel"><div class="panel-title">DENSIDADES</div><div class="panel-body"><div class="ctl" data-f="dens">
+        <div class="dgh">Produtos do processo</div>
+        <div class="dens">
         <label class="f" data-d="prod"><span>Densidade do produto</span><input type="number" id="dProd" value="0.547" min="0.05" max="3" step="0.001"></label>
-        <label class="f" data-d="fill"><span>Densidade do capilar</span><input type="number" id="dFill" value="0.8256" min="0.05" max="3" step="0.0001"></label>
         <label class="f" data-d="sel"><span>Densidade do líq. de selagem</span><input type="number" id="dSel" value="1.0" min="0.05" max="3" step="0.001"></label>
         <label class="f" data-d="leve"><span>Densidade do líquido leve</span><input type="number" id="dLeve" value="0.70" min="0.05" max="3" step="0.001"></label>
         <label class="f" data-d="pes"><span>Densidade do líquido pesado</span><input type="number" id="dPes" value="1.00" min="0.05" max="3" step="0.001"></label>
-      </div><div class="presets" id="presFill"><button type="button" data-d="0.8256">0,8256</button><button type="button" data-d="0.85">Syltherm 0,85</button><button type="button" data-d="0.934">Silicone 0,934</button><button type="button" data-d="1.004">Água-glicol 1,004</button></div></div></div></section>
+        </div>
+        <div class="dgrp" id="grpFill"><div class="dgh">Fluido do capilar</div>
+        <div class="dens"><label class="f" data-d="fill"><span>Densidade do capilar</span><input type="number" id="dFill" value="0.8256" min="0.05" max="3" step="0.0001"></label></div>
+        <div class="presets" id="presFill"><button type="button" data-d="0.8256">0,8256</button><button type="button" data-d="0.85">Syltherm 0,85</button><button type="button" data-d="0.934">Silicone 0,934</button><button type="button" data-d="1.004">Água-glicol 1,004</button></div></div>
+      </div></div></section>
     </aside>
 
     <section class="center">
@@ -557,7 +563,7 @@ function aplicaArranjo(){
   Array.prototype.forEach.call(document.querySelectorAll("[data-d]"), function(el){
     if(el.tagName === "LABEL") el.style.display = A.dens.indexOf(el.dataset.d) >= 0 ? "" : "none";
   });
-  $("presFill").style.display = (A.dens.indexOf("fill") >= 0) ? "" : "none";
+  $("grpFill").style.display = (A.dens.indexOf("fill") >= 0) ? "" : "none";
   var geoVisivel = ["inf","sup","alt","pote"].some(function(f){ return A.campos.indexOf(f) >= 0; });
   $("panGeo").style.display = geoVisivel ? "" : "none";
   var alt = $("alt");
@@ -665,6 +671,25 @@ function sincroniza(k){
 DENSF.forEach(function(k){ $(k).addEventListener("input", render); });
 $("med").addEventListener("input", render);
 $("tagName").addEventListener("input", function(){ document.title = $("tagName").value + " · Régua de nível"; });
+
+/* atalhos de densidade de produto — acrescentar aqui os produtos Braskem (nome + densidade confirmada) */
+var PRODUTOS = [
+  {n:"Água", d:1.004},
+  {n:"Óleo", d:0.70},
+  {n:"", d:0.547}
+];
+["dProd","dSel","dLeve","dPes"].forEach(function(id){
+  var box = document.createElement("div");
+  box.className = "presets prodpres";
+  PRODUTOS.forEach(function(p){
+    var b = document.createElement("button");
+    b.type = "button";
+    b.textContent = (p.n ? p.n + " " : "") + String(p.d).replace(".", ",");
+    b.addEventListener("click", function(){ $(id).value = p.d; render(); });
+    box.appendChild(b);
+  });
+  $(id).parentNode.appendChild(box);
+});
 
 Array.prototype.forEach.call($("presFill").querySelectorAll("button"), function(b){
   b.addEventListener("click", function(){ $("dFill").value = b.dataset.d; render(); });
