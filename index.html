@@ -50,6 +50,7 @@ input[type=range]{width:100%;accent-color:var(--blue)}
 @media(max-width:780px){.workspace{grid-template-columns:1fr}.draw{height:500px}.arr-caption{align-items:flex-start;flex-direction:column}.arr{min-width:142px}.rightcol{display:flex;flex-direction:column}.rightcol>.panel:last-child{grid-column:auto}}
 
 input[type=range].hideslider{display:none}
+.lgbox{min-width:58px;text-align:center;background:#f7fbfd;border:1px solid #16863f;border-radius:8px;color:#16863f;font-weight:700;font-size:13px;padding:4px 6px}
 .stage.notx .vert-control.tx{display:none}
 .vrow{display:grid;grid-template-columns:1fr 1fr;gap:8px}.vrow .f{display:flex;flex-direction:column;gap:4px}.vrow .f>span{font-size:10px;color:#7f97a8}.vrow input{width:100%;background:#07131e;border:1px solid var(--line);border-radius:7px;color:#e9f6ff;padding:7px 8px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
 .dgh{font-size:10px;letter-spacing:.1em;color:#7f97a8;text-transform:uppercase;margin:2px 0 8px}.dgrp{margin-top:14px;padding-top:10px;border-top:1px solid rgba(35,56,75,.7)}.dens{grid-template-columns:1fr!important}.prodpres{margin-top:4px}.prodpres button{padding:5px 8px;font-size:10.5px}
@@ -109,7 +110,7 @@ input[type=range].hideslider{display:none}
     <section class="center">
       <div class="stage">
         <div class="stage-head"><strong>VASO / INSTALAÇÃO</strong><span>Nível atual <span class="live mono" id="liveLevelPct">0,0%</span></span></div>
-        <div class="vert-control level"><label>LG</label><strong id="levelBadge">Nível</strong><input class="vertical" type="range" id="vLvl" min="0" max="900" value="0" step="1" aria-label="Nível de produto"></div>
+        <div class="vert-control level"><div class="lgbox mono" id="lgPctBox" aria-live="polite">0,0%</div><label>LG</label><strong id="levelBadge">Nível</strong><input class="vertical" type="range" id="vLvl" min="0" max="900" value="0" step="1" aria-label="Nível de produto"></div>
         <div class="draw"><svg id="svg" viewBox="0 0 700 460" role="img" aria-label="Desenho do arranjo de medição"></svg></div>
         <div class="vert-control tx"><label>Transmissor</label><strong>TX</strong><input class="vertical" type="range" id="vAlt" min="0" max="1700" value="700" step="1" aria-label="Altura do transmissor"></div>
         <div class="physics" id="physNote">A posição do transmissor participa do cálculo conforme o arranjo selecionado.</div>
@@ -636,6 +637,7 @@ function syncVisualSliders(r){
   if(pct){
     var lgMaxPct = getLGRange(r);
     pct.textContent = (lgMaxPct ? Math.max(0, Math.min(100, r.nivel/lgMaxPct*100)) : 0).toFixed(1).replace('.',',') + '%';
+    $("lgPctBox").textContent = pct.textContent;
   }
   if(note){
     note.textContent = atual === "remoto"
