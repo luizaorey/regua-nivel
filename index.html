@@ -351,7 +351,7 @@ function svgDraw(r){
   // Geometria VISUAL fixa: mover o transmissor nunca redimensiona nem desloca o vaso.
   // As cotas numéricas continuam vindo do cálculo real; o desenho é didático e permanece estável.
   var i2 = (atual === "interface2");              // interface: vaso maior, sem cursor TX
-  var cx = i2 ? 290 : 270, wv = i2 ? 190 : 150;
+  var cx = i2 ? 300 : 270, wv = i2 ? 224 : 150;
   var xL = cx - wv/2, xR = cx + wv/2;
   var yTopo = i2 ? 60 : 82, yFundo = i2 ? 460 : 352, cap = 30;   // interface: vaso sobe e cresce, abrindo espaço embaixo p/ válvulas
   var yHP = i2 ? 430 : 326, yLP = i2 ? 90 : 112;                  // bocais laterais padrão
