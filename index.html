@@ -474,6 +474,7 @@ function svgDraw(r){
     yT = yHPvis - fUp * (yHPvis-yLPvis);
     yT = Math.max(75, Math.min(i2 ? 470 : 398, yT));
   }
+  if(i2) yT = yHPvis;                // interface: transmissor fixo na altura da tomada de alta
 
   // transmissor mais legível
   s.push('<rect x="'+(xT-wT/2)+'" y="'+(yT-hT/2)+'" width="'+wT+'" height="'+hT+'" rx="7" fill="#15506d" stroke="#2F9BD8" stroke-width="1.8"/>');
