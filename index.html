@@ -50,6 +50,7 @@ input[type=range]{width:100%;accent-color:var(--blue)}
 @media(max-width:780px){.workspace{grid-template-columns:1fr}.draw{height:500px}.arr-caption{align-items:flex-start;flex-direction:column}.arr{min-width:142px}.rightcol{display:flex;flex-direction:column}.rightcol>.panel:last-child{grid-column:auto}}
 
 input[type=range].hideslider{display:none}
+.stage.notx .vert-control.tx{display:none}
 .vrow{display:grid;grid-template-columns:1fr 1fr;gap:8px}.vrow .f{display:flex;flex-direction:column;gap:4px}.vrow .f>span{font-size:10px;color:#7f97a8}.vrow input{width:100%;background:#07131e;border:1px solid var(--line);border-radius:7px;color:#e9f6ff;padding:7px 8px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
 .dgh{font-size:10px;letter-spacing:.1em;color:#7f97a8;text-transform:uppercase;margin:2px 0 8px}.dgrp{margin-top:14px;padding-top:10px;border-top:1px solid rgba(35,56,75,.7)}.dens{grid-template-columns:1fr!important}.prodpres{margin-top:4px}.prodpres button{padding:5px 8px;font-size:10.5px}
 .spanunit{display:flex;gap:6px;margin-top:8px}.spanunit button{flex:1;background:#081521;border:1px solid var(--line);color:#9fb5c4;border-radius:7px;padding:7px 6px;font-size:10.5px;cursor:pointer}.spanunit button.on{border-color:var(--blue);color:var(--cyan);background:#0b2940}
@@ -207,7 +208,7 @@ var ARR = {
     dens:["leve","pes","fill"],
     lblAlt:"Altura do transmissor",
     lblSpan:"Faixa medida · 0 a 100%",
-    hintAlt:"É capilar nas duas tomadas: mexer na altura do transmissor não altera o zero. Arraste e confira.",
+    hintAlt:"É capilar nas duas tomadas: a altura do transmissor não altera o zero.",
     desenho:{lp:"capilar",hp:"capilar",camara:false},
     iface:true
   }
@@ -347,17 +348,17 @@ function svgDraw(r){
 
   // Geometria VISUAL fixa: mover o transmissor nunca redimensiona nem desloca o vaso.
   // As cotas numéricas continuam vindo do cálculo real; o desenho é didático e permanece estável.
-  var cx = 270, wv = 150;
+  var i2 = (atual === "interface2");              // interface: vaso maior, sem cursor TX
+  var cx = i2 ? 305 : 270, wv = i2 ? 210 : 150;
   var xL = cx - wv/2, xR = cx + wv/2;
-  var oy = (atual === "interface2") ? -30 : 0;     // sobe o vaso pra abrir espaço embaixo (válvulas)
-  var yTopo = 82+oy, yFundo = 352+oy, cap = 30;
-  var yHP = 326+oy, yLP = 112+oy;                    // bocais laterais padrão
+  var yTopo = i2 ? 48 : 82, yFundo = i2 ? 340 : 352, cap = 30;   // interface: vaso sobe e cresce, abrindo espaço embaixo p/ válvulas
+  var yHP = i2 ? 314 : 326, yLP = i2 ? 78 : 112;                  // bocais laterais padrão
   // No arranjo "Selo direto na alta / capilar na baixa", somente o desenho muda:
   // LP fica na cabeça superior do vaso e HP no fundo inferior. Cálculos permanecem intactos.
   var capilarVertical = (atual === "pernaumida");
   var yHPvis = capilarVertical ? (yFundo + cap) : yHP;
   var yLPvis = capilarVertical ? (yTopo - cap) : yLP;
-  var xT = 505, wT = 58, hT = 34;
+  var xT = i2 ? 570 : 505, wT = 58, hT = 34;
   var s = [];
 
   s.push('<defs>'
@@ -514,8 +515,10 @@ function svgDraw(r){
   }
   cota(xL-72,yFundo,yTopo,(A.lblVaso ? 'h tomadas ' : 'h vaso ')+Math.round(r.vaso)+' mm');
   if(D.lp==='capilar') cota(xR+118,yHPvis,yLPvis,'entre tomadas '+Math.round(r.sep)+' mm','#2F9BD8');
-  if(A.altBaixo) cota(xT+70,yHPvis,yT,'TX ↓ '+Math.round(r.alt)+' mm','#FFB020');
-  else cota(xT+70,yHPvis,yT,'TX '+Math.round(r.alt)+' mm','#FFB020');
+  if(!i2){
+    if(A.altBaixo) cota(xT+70,yHPvis,yT,'TX ↓ '+Math.round(r.alt)+' mm','#FFB020');
+    else cota(xT+70,yHPvis,yT,'TX '+Math.round(r.alt)+' mm','#FFB020');
+  }
 
   if(atual === "interface2"){
     var cxv = cx, yDren = yFundo + cap, yPr = yTopo + 8;
@@ -527,10 +530,11 @@ function svgDraw(r){
     s.push('<text x="'+(cxv+18)+'" y="'+(yDren+44)+'" fill="'+corTxt+'" font-size="9.5" '+fonte+'>abre '+vAgua.abre+'% · fecha '+vAgua.fecha+'%</text>');
     s.push('<text x="'+cxv+'" y="'+(yDren+93)+'" fill="'+corTxt+'" font-size="10" text-anchor="middle" '+fonte+'>ÁGUA ▼</text>');
     // saída de produto (lado direito, parte de cima)
-    s.push('<rect x="'+xR+'" y="'+(yPr-5)+'" width="150" height="10" fill="'+(vProd.aberta?'#FFB020':'none')+'" fill-opacity=".6" stroke="#526873" stroke-width="2"/>');
-    s.push(valvSvg(xR+70, yPr, false, vProd.aberta));
-    s.push('<text x="'+(xR+22)+'" y="'+(yPr-12)+'" fill="'+corTxt+'" font-size="10.5" font-weight="700" '+fonte+'>V-PRODUTO · '+(vProd.aberta?'ABERTA':'FECHADA')+'  (abre '+vProd.abre+'% · fecha '+vProd.fecha+'%)</text>');
-    s.push('<text x="'+(xR+156)+'" y="'+(yPr+4)+'" fill="'+corTxt+'" font-size="10" '+fonte+'>PRODUTO ▶</text>');
+    s.push('<rect x="'+xR+'" y="'+(yPr-5)+'" width="120" height="10" fill="'+(vProd.aberta?'#FFB020':'none')+'" fill-opacity=".6" stroke="#526873" stroke-width="2"/>');
+    s.push(valvSvg(xR+60, yPr, false, vProd.aberta));
+    s.push('<text x="'+(xR+10)+'" y="'+(yPr-24)+'" fill="'+corTxt+'" font-size="10.5" font-weight="700" '+fonte+'>V-PRODUTO · '+(vProd.aberta?'ABERTA':'FECHADA')+'</text>');
+    s.push('<text x="'+(xR+10)+'" y="'+(yPr-12)+'" fill="'+corTxt+'" font-size="9.5" '+fonte+'>abre '+vProd.abre+'% · fecha '+vProd.fecha+'%</text>');
+    s.push('<text x="'+(xR+126)+'" y="'+(yPr+4)+'" fill="'+corTxt+'" font-size="10" '+fonte+'>PRODUTO ▶</text>');
   }
 
   return s.join('');
@@ -560,6 +564,7 @@ function render(){
 
   // desenho
   if(atual === "interface2") valvEstado(r);
+  $("svg").setAttribute("viewBox", atual === "interface2" ? "0 0 700 480" : "0 0 700 460");
   $("svg").innerHTML = svgDraw(r);
   syncVisualSliders(r);
 
@@ -650,6 +655,7 @@ function aplicaArranjo(){
   $("panGeo").style.display = geoVisivel ? "" : "none";
   $("panValv").style.display = (A.campos.indexOf("valv") >= 0) ? "" : "none";
   if(atual !== "interface2" && simTimer) simAlterna();
+  document.querySelector(".stage").classList.toggle("notx", atual === "interface2");
   var alt = $("alt");
   if(A.altBaixo){ alt.min = 0; if(+alt.value < 0){ alt.value = 0; $("oAlt").value = 0; } }
   else { alt.min = -1500; }
