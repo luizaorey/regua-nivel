@@ -67,7 +67,7 @@ input[type=range].hideslider{display:none}
   <main class="workspace">
     <aside class="leftcol">
       <section class="panel"><div class="panel-title">CONFIGURAÇÃO DO VASO</div><div class="panel-body">
-        <div class="ctl" data-f="vaso"><div class="top"><label for="vas">Altura útil do vaso</label><span><input type="number" class="numbox amber" id="oVas" value="900" min="100" max="6000" step="1"><span class="unitmm">mm</span></span></div><input type="range" id="vas" min="100" max="4000" step="1" value="900" class="hideslider"></div>
+        <div class="ctl" data-f="vaso"><div class="top"><label for="vas">Altura entre as tomadas</label><span><input type="number" class="numbox amber" id="oVas" value="900" min="100" max="6000" step="1"><span class="unitmm">mm</span></span></div><input type="range" id="vas" min="100" max="4000" step="1" value="900" class="hideslider"></div>
         <div class="ctl" data-f="span"><div class="top"><label for="spn" id="lblSpan">Span · 0 a 100%</label><span><input type="number" class="numbox amber" id="oSpn" value="850" min="10" max="6000" step="1"><span class="unitmm" id="spnUnitLbl">mm</span></span></div><input type="range" id="spn" min="10" max="4000" step="1" value="850" class="hideslider"><div class="spanunit" id="spanUnitBtns"><button type="button" class="on" data-u="mm">mm · físico</button><button type="button" data-u="mmh2o">mmH₂O · da folha de dados</button></div></div>
         <div class="ctl" data-f="nivel"><div class="top"><label for="lvl">LG · nível de produto (0–100%)</label><span><input type="number" class="numbox" id="oLvl" value="0" min="0" step="1"><span class="unitmm">mm</span></span></div><div class="lgquick" id="lgQuick"><button type="button" data-p="0">0%</button><button type="button" data-p="25">25%</button><button type="button" data-p="50">50%</button><button type="button" data-p="75">75%</button><button type="button" data-p="100">100%</button></div><input type="range" id="lvl" min="0" max="900" step="1" value="0"></div>
       </div></section>
@@ -448,7 +448,7 @@ function svgDraw(r){
     s.push('<line x1="'+x+'" y1="'+y1+'" x2="'+x+'" y2="'+y2+'" stroke="'+(cor||'#718E97')+'" stroke-width="1" marker-start="url(#a2)" marker-end="url(#a1)"/>');
     s.push('<text x="'+(x+8)+'" y="'+((y1+y2)/2+3)+'" fill="'+(cor||'#526873')+'" font-size="9.5" font-family="ui-monospace,Menlo,monospace">'+txt+'</text>');
   }
-  cota(xL-72,yFundo,yTopo,'h vaso '+Math.round(r.vaso)+' mm');
+  cota(xL-72,yFundo,yTopo,'h tomadas '+Math.round(r.vaso)+' mm');
   if(D.lp==='capilar') cota(xR+118,yHPvis,yLPvis,'entre tomadas '+Math.round(r.sep)+' mm','#2F9BD8');
   if(A.altBaixo) cota(xT+70,yHPvis,yT,'TX ↓ '+Math.round(r.alt)+' mm','#FFB020');
   else cota(xT+70,yHPvis,yT,'TX '+Math.round(r.alt)+' mm','#FFB020');
