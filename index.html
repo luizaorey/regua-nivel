@@ -179,6 +179,19 @@ var ARR = {
     hintAlt:"Os dois capilares sobem juntos: mexer na altura não altera o zero. Arraste e confira.",
     desenho:{lp:"capilar",hp:"capilar",camara:false}
   },
+  remoto2:{
+    nome:"Dois selos com supressão",
+    sub:"Transmissor abaixo das tomadas",
+    campos:["nivel","span","inf","sup","dens","med"],
+    dens:["prod","fill"],
+    lblInf:"Tomada de alta até o transmissor",
+    lblSup:"Tomada de baixa até o transmissor",
+    lblVaso:"Altura entre as tomadas",
+    hintInf:"Distância medida da tomada de alta até o transmissor. A altura entre as tomadas é a diferença entre as duas.",
+    hintAlt:"Transmissor abaixo das tomadas: informe a distância de cada tomada até ele.",
+    padrao:{inf:300, sup:1200},
+    desenho:{lp:"capilar",hp:"capilar",camara:false}
+  },
   pernaumida:{
     nome:"Perna com supressão e elevação",
     sub:"Duas tomadas com flange, capilar nos dois lados",
@@ -214,7 +227,7 @@ var ARR = {
     iface:true
   }
 };
-var ordem = ["remoto","pernaumida","interface2"];
+var ordem = ["remoto","remoto2","pernaumida","interface2"];
 var atual = "remoto";
 
 /* ---------------- pares slider + caixa ---------------- */
@@ -252,6 +265,13 @@ function calc(){
   }
   else if(atual === "remoto"){
     inf = 0; sup = 0;
+    sep  = vaso;
+    elev = -sep * dF;
+    supr = 0;
+  }
+  else if(atual === "remoto2"){
+    // dois capilares, transmissor abaixo das tomadas: inf = tomada de alta até o TX, sup = tomada de baixa até o TX
+    vaso = Math.max(0, sup - inf);          // altura entre as tomadas
     sep  = vaso;
     elev = -sep * dF;
     supr = 0;
@@ -475,6 +495,7 @@ function svgDraw(r){
     yT = yHPvis - fUp * (yHPvis-yLPvis);
     yT = Math.max(75, Math.min(i2 ? 470 : 398, yT));
   }
+  if(atual === "remoto2") yT = yHPvis + 52;   // transmissor abaixo das tomadas
   if(i2) yT = yHPvis - 9;            // interface: transmissor fixo; a entrada de alta (yT+9) fica na mesma linha da tomada de alta
 
   // transmissor mais legível
@@ -519,7 +540,7 @@ function svgDraw(r){
   }
   cota(xL-72,yFundo,yTopo,(A.lblVaso ? 'h tomadas ' : 'h vaso ')+Math.round(r.vaso)+' mm');
   if(D.lp==='capilar') cota(xR+118,yHPvis,yLPvis,'entre tomadas '+Math.round(r.sep)+' mm','#2F9BD8');
-  if(!i2){
+  if(!i2 && atual !== "remoto2"){
     if(A.altBaixo) cota(xT+70,yHPvis,yT,'TX ↓ '+Math.round(r.alt)+' mm','#FFB020');
     else cota(xT+70,yHPvis,yT,'TX '+Math.round(r.alt)+' mm','#FFB020');
   }
@@ -660,7 +681,11 @@ function aplicaArranjo(){
   $("panGeo").style.display = geoVisivel ? "" : "none";
   $("panValv").style.display = (A.campos.indexOf("valv") >= 0) ? "" : "none";
   if(atual !== "interface2" && simTimer) simAlterna();
-  document.querySelector(".stage").classList.toggle("notx", atual === "interface2");
+  document.querySelector(".stage").classList.toggle("notx", atual === "interface2" || atual === "remoto2");
+  if(A.padrao && !A.padraoAplicado){
+    A.padraoAplicado = true;
+    Object.keys(A.padrao).forEach(function(k){ $(k).value = A.padrao[k]; $("o"+cap(k)).value = A.padrao[k]; });
+  }
   var alt = $("alt");
   if(A.altBaixo){ alt.min = 0; if(+alt.value < 0){ alt.value = 0; $("oAlt").value = 0; } }
   else { alt.min = -1500; }
