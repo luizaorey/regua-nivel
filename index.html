@@ -692,6 +692,9 @@ function aplicaArranjo(){
   Array.prototype.forEach.call(document.querySelectorAll(".arr"), function(b){
     b.classList.toggle("on", b.dataset.k === atual);
   });
+  var lgm = getLGRange(calc());               // o limite do LG segue o arranjo (tomada a tomada), não o valor da tela anterior
+  $("lvl").max = lgm;
+  if(num("lvl") > lgm){ $("lvl").value = lgm; $("oLvl").value = lgm; }
   render();
 }
 
