@@ -373,16 +373,17 @@ function svgDraw(r){
   // Geometria VISUAL fixa: mover o transmissor nunca redimensiona nem desloca o vaso.
   // As cotas numéricas continuam vindo do cálculo real; o desenho é didático e permanece estável.
   var i2 = (atual === "interface2");              // interface: vaso maior, sem cursor TX
-  var cx = i2 ? 300 : 270, wv = i2 ? 224 : 150;
+  var big = i2 || atual === "remoto" || atual === "remoto2";   // vaso grande (alto e proporcional), sem cursor TX
+  var cx = big ? 300 : 270, wv = big ? 224 : 150;
   var xL = cx - wv/2, xR = cx + wv/2;
-  var yTopo = i2 ? 60 : 82, yFundo = i2 ? 460 : 352, cap = 30;   // interface: vaso sobe e cresce, abrindo espaço embaixo p/ válvulas
-  var yHP = i2 ? 430 : 326, yLP = i2 ? 90 : 112;                  // bocais laterais padrão
+  var yTopo = big ? 60 : 82, yFundo = big ? 460 : 352, cap = 30;   // interface: vaso sobe e cresce, abrindo espaço embaixo p/ válvulas
+  var yHP = big ? 430 : 326, yLP = big ? 90 : 112;                  // bocais laterais padrão
   // No arranjo "Selo direto na alta / capilar na baixa", somente o desenho muda:
   // LP fica na cabeça superior do vaso e HP no fundo inferior. Cálculos permanecem intactos.
   var capilarVertical = (atual === "pernaumida");
   var yHPvis = capilarVertical ? (yFundo + cap) : yHP;
   var yLPvis = capilarVertical ? (yTopo - cap) : yLP;
-  var xT = i2 ? 560 : 505, wT = 58, hT = 34;
+  var xT = big ? 560 : 505, wT = 58, hT = 34;
   var s = [];
 
   s.push('<defs>'
@@ -494,10 +495,10 @@ function svgDraw(r){
     var sepRef = Math.max(r.sep || (r.vaso+r.inf+r.sup), r.vaso, 1);
     var fUp = Math.max(-0.25, Math.min(1.25, r.alt / sepRef));
     yT = yHPvis - fUp * (yHPvis-yLPvis);
-    yT = Math.max(75, Math.min(i2 ? 470 : 398, yT));
+    yT = Math.max(75, Math.min(big ? 470 : 398, yT));
   }
   if(atual === "remoto2") yT = yHPvis + 52;   // transmissor abaixo das tomadas
-  if(i2) yT = yHPvis - 9;            // interface: transmissor fixo; a entrada de alta (yT+9) fica na mesma linha da tomada de alta
+  if(i2 || atual === "remoto") yT = yHPvis - 9;            // interface: transmissor fixo; a entrada de alta (yT+9) fica na mesma linha da tomada de alta
 
   // transmissor mais legível
   s.push('<rect x="'+(xT-wT/2)+'" y="'+(yT-hT/2)+'" width="'+wT+'" height="'+hT+'" rx="7" fill="#15506d" stroke="#2F9BD8" stroke-width="1.8"/>');
@@ -541,7 +542,7 @@ function svgDraw(r){
   }
   cota(xL-72,yFundo,yTopo,(A.lblVaso ? 'h tomadas ' : 'h vaso ')+Math.round(r.vaso)+' mm');
   if(D.lp==='capilar') cota(xR+118,yHPvis,yLPvis,'entre tomadas '+Math.round(r.sep)+' mm','#2F9BD8');
-  if(!i2 && atual !== "remoto2"){
+  if(!big){
     if(A.altBaixo) cota(xT+70,yHPvis,yT,'TX ↓ '+Math.round(r.alt)+' mm','#FFB020');
     else cota(xT+70,yHPvis,yT,'TX '+Math.round(r.alt)+' mm','#FFB020');
   }
@@ -590,7 +591,7 @@ function render(){
 
   // desenho
   if(atual === "interface2") valvEstado(r);
-  $("svg").setAttribute("viewBox", atual === "interface2" ? "0 0 700 640" : "0 0 700 460");
+  $("svg").setAttribute("viewBox", atual === "interface2" ? "0 0 700 640" : ((atual === "remoto" || atual === "remoto2") ? "0 0 700 560" : "0 0 700 460"));
   $("svg").innerHTML = svgDraw(r);
   syncVisualSliders(r);
 
@@ -682,7 +683,7 @@ function aplicaArranjo(){
   $("panGeo").style.display = geoVisivel ? "" : "none";
   $("panValv").style.display = (A.campos.indexOf("valv") >= 0) ? "" : "none";
   if(atual !== "interface2" && simTimer) simAlterna();
-  document.querySelector(".stage").classList.toggle("notx", atual === "interface2" || atual === "remoto2");
+  document.querySelector(".stage").classList.toggle("notx", atual === "interface2" || atual === "remoto2" || atual === "remoto");
   if(A.padrao && !A.padraoAplicado){
     A.padraoAplicado = true;
     Object.keys(A.padrao).forEach(function(k){ $(k).value = A.padrao[k]; $("o"+cap(k)).value = A.padrao[k]; });
