@@ -58,7 +58,7 @@ input[type=range].hideslider{display:none}
 .vrow{display:grid;grid-template-columns:1fr 1fr;gap:8px}.vrow .f{display:flex;flex-direction:column;gap:4px}.vrow .f>span{font-size:10px;color:#7f97a8}.vrow input{width:100%;background:#07131e;border:1px solid var(--line);border-radius:7px;color:#e9f6ff;padding:7px 8px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
 .dgh{font-size:10px;letter-spacing:.1em;color:#7f97a8;text-transform:uppercase;margin:2px 0 8px}.dgrp{margin-top:14px;padding-top:10px;border-top:1px solid rgba(35,56,75,.7)}.dens{grid-template-columns:1fr!important}.prodpres{margin-top:4px}.prodpres button{padding:5px 8px;font-size:10.5px}
 .spanunit{display:flex;gap:6px;margin-top:8px}.spanunit button{flex:1;background:#081521;border:1px solid var(--line);color:#9fb5c4;border-radius:7px;padding:7px 6px;font-size:10.5px;cursor:pointer}.spanunit button.on{border-color:var(--blue);color:var(--cyan);background:#0b2940}
-.lgquick{display:flex;gap:5px;margin-bottom:9px}.lgquick button{flex:1;background:#081521;border:1px solid var(--line);color:#9fb5c4;border-radius:7px;padding:7px 4px;font-size:11px;cursor:pointer}.lgquick button:active{border-color:var(--green);color:var(--green)}
+.lgquick{display:flex;gap:5px;margin-bottom:9px}.lgquick button{flex:1;background:#081521;border:1px solid var(--line);color:#9fb5c4;border-radius:7px;padding:7px 4px;font-size:11px;cursor:pointer}.lgquick button:active{border-color:var(--green);color:var(--green)}.lgquick button.on{border-color:var(--green);color:var(--green);background:#0b2a1a;font-weight:700;box-shadow:inset 0 0 0 1px var(--green)}
 </style>
 </head>
 <body>
@@ -691,6 +691,10 @@ function syncVisualSliders(r){
     var lgMaxPct = getLGRange(r);
     pct.textContent = (lgMaxPct ? Math.max(0, Math.min(100, r.nivel/lgMaxPct*100)) : 0).toFixed(1).replace('.',',') + '%';
     $("lgPctBox").textContent = pct.textContent;
+    var pcAtual = lgMaxPct ? r.nivel / lgMaxPct * 100 : 0, tol = (lgMaxPct ? 50 / lgMaxPct : 1) + 0.05;
+    Array.prototype.forEach.call(document.querySelectorAll("#lgQuick button"), function(b){
+      b.classList.toggle("on", Math.abs(pcAtual - (+b.dataset.p)) <= tol);
+    });
   }
   if(note){
     note.textContent = atual === "remoto"
@@ -894,6 +898,7 @@ Array.prototype.forEach.call(document.querySelectorAll("#lgQuick button"), funct
     var v = Math.round(max * pct / 100);
     $("lvl").value = v; $("oLvl").value = v;
     sincroniza("lvl"); render();
+    toast("LG em " + pct + "%  ·  " + v + " mm");
   });
 });
 
