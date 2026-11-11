@@ -50,6 +50,7 @@ input[type=range]{width:100%;accent-color:var(--blue)}
 @media(max-width:780px){.workspace{grid-template-columns:1fr}.draw{height:500px}.arr-caption{align-items:flex-start;flex-direction:column}.arr{min-width:142px}.rightcol{display:flex;flex-direction:column}.rightcol>.panel:last-child{grid-column:auto}}
 
 input[type=range].hideslider{display:none}
+.subh{font-size:10px;letter-spacing:.1em;color:#7f97a8;text-transform:uppercase;margin:12px 0 4px;padding-top:8px;border-top:1px solid rgba(35,56,75,.7)}.hd2 small{font-size:10px;color:#7f97a8}
 .hd2{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:5px 0;font-size:12px;color:#b8cad6}.pm{margin-left:5px;background:#081521;border:1px solid var(--line);color:var(--cyan);border-radius:7px;padding:8px 11px;font-size:15px;cursor:pointer}.pm:active{border-color:var(--blue)}
 .cond2 .cbtn{flex:1;text-align:left;padding:9px 10px}.cond2 .cbtn b{display:block;font-size:12px;font-weight:700}.cond2 .cbtn span{display:block;font-size:10px;font-weight:400;margin-top:3px;line-height:1.3;color:#7f97a8}.cond2 .cbtn.on span{color:#9fd8f0}
 .lgbox{min-width:58px;text-align:center;background:#f7fbfd;border:1px solid #16863f;border-radius:8px;color:#16863f;font-weight:700;font-size:13px;padding:4px 6px}
@@ -73,9 +74,9 @@ input[type=range].hideslider{display:none}
   <main class="workspace">
     <aside class="leftcol">
       <section class="panel"><div class="panel-title">CONFIGURAÇÃO DO VASO</div><div class="panel-body">
-        <div class="ctl" data-f="vaso"><div class="top"><label for="vas" id="lblVaso">Altura útil do vaso</label><span><input type="number" class="numbox amber" id="oVas" value="900" min="100" max="6000" step="1"><span class="unitmm">mm</span></span></div><input type="range" id="vas" min="100" max="4000" step="1" value="900" class="hideslider"></div>
-        <div class="ctl" data-f="span"><div class="top"><label for="spn" id="lblSpan">Span · 0 a 100%</label><span><input type="number" class="numbox amber" id="oSpn" value="850" min="10" max="6000" step="1"><span class="unitmm" id="spnUnitLbl">mm</span></span></div><input type="range" id="spn" min="10" max="4000" step="1" value="850" class="hideslider"><div class="spanunit" id="spanUnitBtns"><button type="button" class="on" data-u="mm">mm · físico</button><button type="button" data-u="mmh2o">mmH₂O · da folha de dados</button></div></div>
-        <div class="ctl" data-f="nivel"><div class="top"><label for="lvl">LG · nível de produto (0–100%)</label><span><input type="number" class="numbox" id="oLvl" value="0" min="0" step="1"><span class="unitmm">mm</span></span></div><div class="lgquick" id="lgQuick"><button type="button" data-p="0">0%</button><button type="button" data-p="25">25%</button><button type="button" data-p="50">50%</button><button type="button" data-p="75">75%</button><button type="button" data-p="100">100%</button></div><input type="range" id="lvl" min="0" max="900" step="1" value="0" class="hideslider"></div>
+        <div class="ctl" data-f="vaso"><div class="top"><label for="vas" id="lblVaso">Altura útil do vaso</label><span><input type="number" class="numbox amber" id="oVas" value="900" min="100" max="6000" step="1"><span class="unitmm">mm</span></span></div><input type="range" id="vas" min="100" max="4000" step="any" value="900" class="hideslider"></div>
+        <div class="ctl" data-f="span"><div class="top"><label for="spn" id="lblSpan">Span · 0 a 100%</label><span><input type="number" class="numbox amber" id="oSpn" value="850" min="10" max="6000" step="1"><span class="unitmm" id="spnUnitLbl">mm</span></span></div><input type="range" id="spn" min="10" max="4000" step="any" value="850" class="hideslider"><div class="spanunit" id="spanUnitBtns"><button type="button" class="on" data-u="mm">mm · físico</button><button type="button" data-u="mmh2o">mmH₂O · da folha de dados</button></div></div>
+        <div class="ctl" data-f="nivel"><div class="top"><label for="lvl">LG · nível de produto (0–100%)</label><span><input type="number" class="numbox" id="oLvl" value="0" min="0" step="1"><span class="unitmm">mm</span></span></div><div class="lgquick" id="lgQuick"><button type="button" data-p="0">0%</button><button type="button" data-p="25">25%</button><button type="button" data-p="50">50%</button><button type="button" data-p="75">75%</button><button type="button" data-p="100">100%</button></div><input type="range" id="lvl" min="0" max="900" step="any" value="0" class="hideslider"></div>
       </div></section>
 
       <section class="panel" id="panGeo"><div class="panel-title">GEOMETRIA / TRANSMISSOR</div><div class="panel-body">
@@ -125,7 +126,25 @@ input[type=range].hideslider{display:none}
         <div class="hud"><div class="hud-top"><div class="pv"><span class="n mono" id="hPV">0</span><span class="u">mmH₂O · PV</span></div><div class="ma"><div class="n mono" id="hMA">4,00</div><div class="u">mA · <span id="hPC">0</span>%</div></div></div><div class="bar" id="hBar"><i style="width:0%"></i></div><div class="hud-bot"><div class="cell"><div class="k">LRV · 0%</div><div class="v mono" id="hLRV">0</div><div class="mm mono" id="hLRVmm"></div></div><div class="cell"><div class="k">URV · 100%</div><div class="v mono" id="hURV">0</div><div class="mm mono" id="hURVmm"></div></div><div class="cell"><div class="k">SPAN</div><div class="v mono" id="hSPN">0</div><div class="mm mono" id="hSPNmm"></div></div></div></div>
       </div></section>
 
-      <section class="panel"><div class="panel-title">CONFERÊNCIA DE CAMPO</div><div class="panel-body"><div class="check" data-f="med"><div class="hd"><span>ΔP medido (PV)</span><span><input type="text" inputmode="decimal" autocomplete="off" class="numbox wide" id="med" value="-" placeholder="PV lido"><button type="button" class="pm" data-t="med" aria-label="Trocar sinal">±</button><span class="unitmm">mmH₂O</span></span></div><div class="bd"><div class="hd2"><span>% lida (opcional)</span><span><input type="text" inputmode="decimal" autocomplete="off" class="numbox wide" id="medPc" placeholder="% do LT"><button type="button" class="pm" data-t="medPc" aria-label="Trocar sinal">±</button><span class="unitmm">%</span></span></div><div class="hd2"><span>Corrente lida (opcional)</span><span><input type="text" inputmode="decimal" autocomplete="off" class="numbox wide" id="medMa" placeholder="mA do LT"><span class="unitmm" style="margin-left:34px">mA</span></span></div><div class="cond2"><button type="button" class="cbtn on" data-c="seco"><b>Selos secos</b><span>Tomadas bloqueadas. Sem processo ligado.</span></button><button type="button" class="cbtn" data-c="oper"><b>Vaso vazio</b><span>Tomadas abertas. Ligadas ao vaso.</span></button></div><div class="hint" style="margin:8px 0 6px">Digite o PV em mmH₂O (pressão). Se o teclado não tem o menos, use o botão ±. A % e os mA são opcionais, só pra conferir.</div><div class="row"><span class="k">Elevação · coluna</span><span class="v mono" id="cElev">—</span></div><div class="row"><span class="k">Supressão</span><span class="v mono" id="cSupr">—</span></div><div class="row"><span class="k" id="kCalc">Calculado</span><span class="v mono" id="cCalc">—</span></div><div class="row"><span class="k">Diferença</span><span class="v mono" id="cDif">—</span></div><div class="row" id="rowCol"><span class="k">Coluna implícita</span><span class="v mono" id="cCol">—</span></div><div class="row" id="rowGeo"><span class="k">Separação geométrica</span><span class="v mono" id="cGeo">—</span></div><div class="row" id="rowPc" style="display:none"><span class="k">% calculada para esse ΔP</span><span class="v mono" id="cPc">—</span></div><div class="row" id="rowPcDif" style="display:none"><span class="k">Diferença da % lida</span><span class="v mono" id="cPcDif">—</span></div><div class="row" id="rowMa" style="display:none"><span class="k">mA esperado para a % lida</span><span class="v mono" id="cMa">—</span></div><div class="row" id="rowMaDif" style="display:none"><span class="k">Diferença do mA lido</span><span class="v mono" id="cMaDif">—</span></div><div class="verdict" id="cVerd">—</div><button type="button" class="solve" id="btnSolve">Usar densidade que fecha a conta</button></div></div></div></section>
+      <section class="panel"><div class="panel-title">CONFERÊNCIA DE CAMPO</div><div class="panel-body"><div class="check" data-f="med"><div class="hd"><span>ΔP medido no Trex (PV)</span><span><input type="text" inputmode="decimal" autocomplete="off" class="numbox wide" id="med" value="-" placeholder="PV lido"><button type="button" class="pm" data-t="med" aria-label="Trocar sinal">±</button><span class="unitmm">mmH₂O</span></span></div><div class="bd">
+<div class="hint" style="margin:0 0 8px">Vaso em operação: grave o LRV e o URV do app no Trex e compare o que o LT indica com o nível do LG em campo. Digite o PV em mmH₂O. Se o teclado não tem o menos, use o botão ±.</div>
+<div class="hd2"><span>Nível indicado no Trex (%)<br><small>opcional</small></span><span><input type="text" inputmode="decimal" autocomplete="off" class="numbox wide" id="medPc" placeholder="% do Trex"><button type="button" class="pm" data-t="medPc" aria-label="Trocar sinal">±</button><span class="unitmm">%</span></span></div>
+<div class="hd2"><span>Corrente indicada no Trex (mA)<br><small>opcional</small></span><span><input type="text" inputmode="decimal" autocomplete="off" class="numbox wide" id="medMa" placeholder="mA do Trex"><span class="unitmm" style="margin-left:34px">mA</span></span></div>
+<div class="hd2"><span>Nível visual estimado no LG (%)<br><small>0 a 100</small></span><span><input type="text" inputmode="decimal" autocomplete="off" class="numbox wide" id="medLg" value="" placeholder="0 a 100"><span class="unitmm" style="margin-left:34px">%</span></span></div>
+<div class="hint" style="margin:0 0 8px">Estime o nível entre as mesmas alturas de 0% e 100% usadas pelo LT.</div>
+<div class="subh">Escala do LT</div>
+<div class="row"><span class="k">Faixa usada (a gravada no Trex)</span><span class="v mono" id="cFaixa">—</span></div>
+<div class="row" id="rowPc" style="display:none"><span class="k">% esperado para esse PV</span><span class="v mono" id="cPc">—</span></div>
+<div class="row" id="rowMa" style="display:none"><span class="k">mA esperado (saída linear)</span><span class="v mono" id="cMa">—</span></div>
+<div class="row" id="rowPcDif" style="display:none"><span class="k">% do Trex menos esperado</span><span class="v mono" id="cPcDif">—</span></div>
+<div class="row" id="rowMaDif" style="display:none"><span class="k">mA do Trex menos esperado</span><span class="v mono" id="cMaDif">—</span></div>
+<div class="verdict" id="cEsc">—</div>
+<div class="subh">Comparação com o LG</div>
+<div class="row" id="rowLgPv" style="display:none"><span class="k">PV esperada pelo LG</span><span class="v mono" id="cLgPv">—</span></div>
+<div class="row" id="rowLgDif" style="display:none"><span class="k">PV medida menos esperada pelo LG</span><span class="v mono" id="cLgDif">—</span></div>
+<div class="row" id="rowLgPp" style="display:none"><span class="k">% do LT menos % do LG</span><span class="v mono" id="cLgPp">—</span></div>
+<div class="verdict" id="cLgMsg">—</div>
+</div></div></div></section>
 
       <section class="panel"><div class="panel-title">ARQUIVO LOCAL</div><div class="save"><button type="button" id="btnSave">Salvar este vaso</button><button type="button" class="ghost" id="btnNew">Novo</button></div><p class="note">Os valores ficam salvos neste aparelho. A leitura de campo prevalece sobre o cálculo; a ferramenta serve para conferir a coerência física.</p></section>
     </aside>
@@ -236,15 +255,7 @@ var atual = "remoto";
 /* ---------------- pares slider + caixa ---------------- */
 var PARES = [["lvl","oLvl"],["vas","oVas"],["inf","oInf"],["sup","oSup"],
              ["alt","oAlt"],["pot","oPot"],["spn","oSpn"]];
-var cond = "seco";
 var spanUnit = "mm";
-
-/* densidade de enchimento que reproduziria a medição */
-function densQueFecha(r, medido){
-  if(!r.sep) return NaN;
-  var col = (cond === "seco") ? medido : (medido - r.supr);
-  return Math.abs(col) / r.sep;
-}
 
 function lerNum(id){
   var t = String($(id).value).replace(/\u2212/g,"-").replace(",",".");
@@ -602,58 +613,52 @@ function render(){
   $("svg").innerHTML = svgDraw(r);
   syncVisualSliders(r);
 
-  // conferência
-  var medido = lerNum("med");
-  var alvo = (cond === "seco") ? r.elev : r.LRV;
-  var dif = medido - alvo;
-  $("cElev").textContent = br(r.elev, 1) + " mmH₂O";
-  $("cSupr").textContent = "+" + br(r.supr, 1) + " mmH₂O";
-  $("kCalc").textContent = (cond === "seco")
-    ? "Esperado só com o capilar" : "Esperado com a perna alagada · LRV";
-  $("cCalc").textContent = br(alvo, 1) + " mmH₂O";
-  $("cDif").textContent  = br(dif, 1) + " mmH₂O";
-  var temCol = (r.sep > 0);
-  $("rowCol").style.display = temCol ? "" : "none";
-  $("rowGeo").style.display = temCol ? "" : "none";
-  if(temCol){
-    $("cCol").textContent = br(Math.abs(medido) / r.densCol, 0) + " mm";
-    $("cGeo").textContent = br(r.sep, 0) + " mm";
-  }
-  var v = $("cVerd");
-  if(!isFinite(medido)){
-    // sem leitura digitada: não compara nada
-    $("cDif").textContent = "—";
-    if(temCol) $("cCol").textContent = "—";
-    v.className = "verdict";
-    v.textContent = "Digite o PV lido no instrumento (em mmH₂O) para conferir com o cálculo.";
-    $("btnSolve").style.display = "none";
+  // conferência de campo (vaso em operação)
+  var medido = lerNum("med"), pcT = lerNum("medPc"), maT = lerNum("medMa");
+  var lgTxt = String($("medLg").value).trim(), lg = lerNum("medLg");
+  var faixa = r.URV - r.LRV;                       // span já em mmH2O (vale para span em mm ou em mmH2O)
+  var temPV = isFinite(medido), faixaOk = Math.abs(faixa) > 1e-9;
+  var sg = function(n, d){ return (n > 0 ? "+" : "") + br(n, d); };
+  var mostra = function(id, on){ $(id).style.display = on ? "" : "none"; };
+  $("cFaixa").textContent = "LRV " + br(r.LRV, 1) + " · URV " + br(r.URV, 1) + " mmH₂O";
+
+  var pcEsp = (temPV && faixaOk) ? 100 * (medido - r.LRV) / faixa : NaN;
+  var maEsp = isFinite(pcEsp) ? 4 + 16 * (pcEsp / 100) : NaN;
+  mostra("rowPc", isFinite(pcEsp)); $("cPc").textContent = br(pcEsp, 2) + " %";
+  mostra("rowMa", isFinite(pcEsp)); $("cMa").textContent = br(maEsp, 2) + " mA";
+  mostra("rowPcDif", isFinite(pcEsp) && isFinite(pcT)); $("cPcDif").textContent = sg(pcT - pcEsp, 2) + " %";
+  mostra("rowMaDif", isFinite(maEsp) && isFinite(maT)); $("cMaDif").textContent = sg(maT - maEsp, 2) + " mA";
+  var ve = $("cEsc"); ve.className = "verdict";
+  if(!temPV){
+    ve.textContent = "Digite o PV medido no Trex (em mmH₂O) para conferir a escala.";
+  } else if(!faixaOk){
+    ve.textContent = "Faixa inválida: o URV é igual ao LRV.";
+  } else if(pcEsp < 0 || pcEsp > 100){
+    ve.textContent = "PV fora da faixa configurada. A corrente real depende dos limites de saída do transmissor, e o mA acima é só a conta linear.";
   } else {
-  v.className = "verdict" + (Math.abs(dif) < 2 ? " ok" : (Math.abs(dif) < 25 ? "" : " bad"));
-  if(Math.abs(dif) < 2){
-    v.textContent = "Fecha. A geometria e a densidade digitadas reproduzem a medição de campo.";
-  } else if(temCol){
-    var dNec = densQueFecha(r, medido);
-    v.textContent = "Não fecha por " + br(dif,1) + " mmH₂O. Com essa separação, a densidade que fecharia é "
-      + br(dNec,4) + (dNec < 0.6 || dNec > 1.3 ? " — valor fora do que existe em fluido de selo, confira a medição." : ".");
-  } else {
-    v.textContent = "Não fecha por " + br(dif,1) + " mmH₂O. Confira a cota da tomada e a densidade do produto.";
-  }
-  $("btnSolve").style.display = temCol ? "" : "none";
+    ve.textContent = "PV dentro da faixa configurada.";
   }
 
-  // % e mA lidos no instrumento (opcionais)
-  var pcL = lerNum("medPc"), maL = lerNum("medMa");
-  var temPc = isFinite(medido) && r.span !== 0;
-  var pcCalc = temPc ? (medido - r.LRV) / r.span * 100 : NaN;
-  var maEsp = isFinite(pcL) ? 4 + 16 * pcL / 100 : NaN;
-  $("rowPc").style.display = temPc ? "" : "none";
-  $("cPc").textContent = br(pcCalc, 1) + " %";
-  $("rowPcDif").style.display = (temPc && isFinite(pcL)) ? "" : "none";
-  $("cPcDif").textContent = br(pcL - pcCalc, 1) + " %";
-  $("rowMa").style.display = isFinite(pcL) ? "" : "none";
-  $("cMa").textContent = br(maEsp, 2) + " mA";
-  $("rowMaDif").style.display = (isFinite(pcL) && isFinite(maL)) ? "" : "none";
-  $("cMaDif").textContent = br(maL - maEsp, 2) + " mA";
+  var vl = $("cLgMsg"); vl.className = "verdict";
+  var lgOk = (lgTxt !== "") && isFinite(lg) && lg >= 0 && lg <= 100;
+  var comp = lgOk && isFinite(pcEsp);
+  mostra("rowLgPv", comp); mostra("rowLgDif", comp); mostra("rowLgPp", comp);
+  if(lgTxt === ""){
+    vl.textContent = "Nível físico não conferido. Informe o nível visual do LG para comparar.";
+  } else if(!lgOk){
+    vl.textContent = "Digite o nível visual do LG entre 0 e 100.";
+  } else if(!isFinite(pcEsp)){
+    vl.textContent = "Informe o PV medido no Trex para comparar com o LG.";
+  } else {
+    var pvLg = r.LRV + (lg / 100) * faixa;
+    var pp = pcEsp - lg;
+    $("cLgPv").textContent = br(pvLg, 1) + " mmH₂O";
+    $("cLgDif").textContent = sg(medido - pvLg, 1) + " mmH₂O";
+    $("cLgPp").textContent = sg(pp, 1) + " pontos";
+    var sentido = Math.abs(pp) < 0.05 ? "LT e LG indicam o mesmo nível."
+      : "LT indica " + br(Math.abs(pp), 1) + " pontos percentuais " + (pp > 0 ? "acima" : "abaixo") + " do LG.";
+    vl.textContent = "Desvio estimado em relação ao LG (leitura visual). " + sentido;
+  }
 
   // texto dos rótulos
   if(A.lblInf)  $("lblInf").textContent  = A.lblInf;
@@ -831,6 +836,7 @@ DENSF.forEach(function(k){ $(k).addEventListener("input", render); });
 $("med").addEventListener("input", render);
 $("medPc").addEventListener("input", render);
 $("medMa").addEventListener("input", render);
+$("medLg").addEventListener("input", render);
 $("med").addEventListener("blur", function(){ if(String(this.value).trim() === "") this.value = "-"; render(); });
 Array.prototype.forEach.call(document.querySelectorAll(".pm"), function(b){
   b.addEventListener("click", function(){
@@ -864,16 +870,6 @@ Array.prototype.forEach.call($("presFill").querySelectorAll("button"), function(
   b.addEventListener("click", function(){ $("dFill").value = b.dataset.d; render(); });
 });
 
-Array.prototype.forEach.call(document.querySelectorAll(".cbtn"), function(b){
-  b.addEventListener("click", function(){
-    cond = b.dataset.c;
-    Array.prototype.forEach.call(document.querySelectorAll(".cbtn"), function(x){
-      x.classList.toggle("on", x.dataset.c === cond);
-    });
-    render();
-  });
-});
-
 Array.prototype.forEach.call(document.querySelectorAll("#spanUnitBtns button"), function(b){
   b.addEventListener("click", function(){
     var novo = b.dataset.u;
@@ -904,16 +900,6 @@ Array.prototype.forEach.call(document.querySelectorAll("#lgQuick button"), funct
 
 ["vaAbre","vaFecha","vpAbre","vpFecha"].forEach(function(id){ $(id).addEventListener("input", render); });
 $("btnSim").addEventListener("click", simAlterna);
-
-$("btnSolve").addEventListener("click", function(){
-  var r = calc();
-  if(!r.sep) return;
-  var d = densQueFecha(r, lerNum("med"));
-  if(isFinite(d) && d > 0){
-    $(atual === "pernaumida" ? "dSel" : "dFill").value = d.toFixed(4);
-    render(); toast("Densidade ajustada para " + d.toFixed(4).replace(".", ","));
-  }
-});
 
 $("btnSave").addEventListener("click", function(){
   var tag = $("tagName").value.trim();
