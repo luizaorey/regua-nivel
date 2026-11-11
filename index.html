@@ -38,7 +38,7 @@ input[type=range]{width:100%;accent-color:var(--blue)}
 .stage{background:linear-gradient(180deg,#f7fafb 0%,#e9eff2 72%,#dce5e9 100%);border-color:#8da0aa;box-shadow:0 16px 45px rgba(0,0,0,.22)}
 .stage-head{background:#e9eff2;color:#183041;border-color:#a9bac3}.stage-head .live{color:#16863f}
 .draw{height:610px}.draw svg{filter:drop-shadow(0 8px 10px rgba(17,31,39,.18))}
-.vert-control{background:rgba(245,249,251,.88);border:1px solid #b9c7ce;border-radius:12px;padding:9px 5px;top:82px;bottom:76px}
+.vert-control{background:rgba(245,249,251,.88);border:1px solid #b9c7ce;border-radius:12px;padding:9px 5px;top:82px;bottom:var(--nb,76px)}
 .vert-control label{color:#425a68}.vert-control strong{color:#16863f}.vert-control.tx strong{color:#b97700}
 .physics{background:#f7fbfd;border-color:#9ebdce;color:#365364;font-weight:600}
 .bottom-arr{margin-top:14px;padding:12px;background:linear-gradient(180deg,#0c1b29,#07131e)}
@@ -672,6 +672,13 @@ function render(){
 
 
 /* ---------------- controles visuais do supervisório ---------------- */
+function ajustaControles(){
+  /* o fim das faixas LG/TX acompanha a altura do texto de dica (no celular ele quebra em várias linhas) */
+  var n = $("physNote"), st = document.querySelector(".stage");
+  if(n && st) st.style.setProperty("--nb", (n.offsetHeight + 28) + "px");
+}
+window.addEventListener("resize", ajustaControles);
+
 function syncVisualSliders(r){
   var vLvl = $("vLvl"), vAlt = $("vAlt"), pct = $("liveLevelPct"), note = $("physNote");
   if(vLvl){
@@ -706,6 +713,7 @@ function syncVisualSliders(r){
       ? "Dois selos remotos: mover o corpo do transmissor entre as tomadas altera o desenho, mas não altera a PV; as colunas do mesmo fluido de enchimento se compensam no ΔP."
       : (r.A.hintAlt || "A posição do transmissor participa do cálculo conforme o arranjo selecionado.");
   }
+  ajustaControles();
 }
 
 /* ---------------- visibilidade por arranjo ---------------- */
