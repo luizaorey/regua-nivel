@@ -55,7 +55,8 @@ input[type=range].hideslider{display:none}
 .cond2 .cbtn{flex:1;text-align:left;padding:9px 10px}.cond2 .cbtn b{display:block;font-size:12px;font-weight:700}.cond2 .cbtn span{display:block;font-size:10px;font-weight:400;margin-top:3px;line-height:1.3;color:#7f97a8}.cond2 .cbtn.on span{color:#9fd8f0}
 .lgbox{min-width:58px;text-align:center;background:#f7fbfd;border:1px solid #16863f;border-radius:8px;color:#16863f;font-weight:700;font-size:13px;padding:4px 6px}
 .stage.notx .vert-control.tx{display:none}
-@media(min-width:781px){.stage.notx .draw{height:740px}.stage.notx .draw svg{max-height:720px}}
+@media(min-width:781px){.stage.bigd .draw{height:740px}.stage.bigd .draw svg{max-height:720px}}
+.vert-control.tx{width:34px;right:6px;padding:8px 2px}.vert-control.tx label{display:none}.vert-control.tx strong{font-size:13px}.vert-control.tx .vertical{width:24px}
 .vrow{display:grid;grid-template-columns:1fr 1fr;gap:8px}.vrow .f{display:flex;flex-direction:column;gap:4px}.vrow .f>span{font-size:10px;color:#7f97a8}.vrow input{width:100%;background:#07131e;border:1px solid var(--line);border-radius:7px;color:#e9f6ff;padding:7px 8px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
 .dgh{font-size:10px;letter-spacing:.1em;color:#7f97a8;text-transform:uppercase;margin:2px 0 8px}.dgrp{margin-top:14px;padding-top:10px;border-top:1px solid rgba(35,56,75,.7)}.dens{grid-template-columns:1fr!important}.prodpres{margin-top:4px}.prodpres button{padding:5px 8px;font-size:10.5px}
 .spanunit{display:flex;gap:6px;margin-top:8px}.spanunit button{flex:1;background:#081521;border:1px solid var(--line);color:#9fb5c4;border-radius:7px;padding:7px 6px;font-size:10.5px;cursor:pointer}.spanunit button.on{border-color:var(--blue);color:var(--cyan);background:#0b2940}
@@ -391,7 +392,7 @@ function svgDraw(r){
   // Geometria VISUAL fixa: mover o transmissor nunca redimensiona nem desloca o vaso.
   // As cotas numéricas continuam vindo do cálculo real; o desenho é didático e permanece estável.
   var i2 = (atual === "interface2");              // interface: vaso maior, sem cursor TX
-  var big = i2 || atual === "remoto" || atual === "remoto2";   // vaso grande (alto e proporcional), sem cursor TX
+  var big = i2 || atual === "remoto" || atual === "remoto2" || atual === "pernaumida";   // vaso grande (alto e proporcional), sem cursor TX
   var cx = big ? 313 : 270, wv = big ? 250 : 150;
   var xL = cx - wv/2, xR = cx + wv/2;
   var yTopo = big ? 64 : 82, yFundo = big ? 504 : 352, cap = 30;   // interface: vaso sobe e cresce, abrindo espaço embaixo p/ válvulas
@@ -401,7 +402,7 @@ function svgDraw(r){
   var capilarVertical = (atual === "pernaumida");
   var yHPvis = capilarVertical ? (yFundo + cap) : yHP;
   var yLPvis = capilarVertical ? (yTopo - cap) : yLP;
-  var xT = big ? 585 : 505, wT = 58, hT = 34;
+  var xT = (big && atual !== "pernaumida") ? 585 : 505, wT = 58, hT = 34;
   var s = [];
 
   s.push('<defs>'
@@ -559,7 +560,7 @@ function svgDraw(r){
     s.push('<text x="'+(x+8)+'" y="'+((y1+y2)/2+3)+'" fill="'+(cor||'#526873')+'" font-size="9.5" font-family="ui-monospace,Menlo,monospace">'+txt+'</text>');
   }
   cota(xL-72,yFundo,yTopo,(A.lblVaso ? 'h tomadas ' : 'h vaso ')+Math.round(r.vaso)+' mm');
-  if(D.lp==='capilar') cota(xR+118,yHPvis,yLPvis,'entre tomadas '+Math.round(r.sep)+' mm','#2F9BD8');
+  if(D.lp==='capilar' && atual !== "pernaumida") cota(xR+118,yHPvis,yLPvis,'entre tomadas '+Math.round(r.sep)+' mm','#2F9BD8');
   if(!big){
     if(A.altBaixo) cota(xT+70,yHPvis,yT,'TX ↓ '+Math.round(r.alt)+' mm','#FFB020');
     else cota(xT+70,yHPvis,yT,'TX '+Math.round(r.alt)+' mm','#FFB020');
@@ -609,7 +610,7 @@ function render(){
 
   // desenho
   if(atual === "interface2") valvEstado(r);
-  $("svg").setAttribute("viewBox", atual === "interface2" ? "0 0 700 690" : (atual === "remoto2" ? "0 0 700 590" : (atual === "remoto" ? "0 0 700 560" : "0 0 700 460")));
+  $("svg").setAttribute("viewBox", atual === "interface2" ? "0 0 700 690" : (atual === "remoto2" ? "0 0 700 590" : ((atual === "remoto" || atual === "pernaumida") ? "0 0 700 560" : "0 0 700 460")));
   $("svg").innerHTML = svgDraw(r);
   syncVisualSliders(r);
 
@@ -731,6 +732,7 @@ function aplicaArranjo(){
   $("panValv").style.display = (A.campos.indexOf("valv") >= 0) ? "" : "none";
   if(atual !== "interface2" && simTimer) simAlterna();
   document.querySelector(".stage").classList.toggle("notx", atual === "interface2" || atual === "remoto2" || atual === "remoto");
+  document.querySelector(".stage").classList.toggle("bigd", true);
   if(A.padrao && !A.padraoAplicado){
     A.padraoAplicado = true;
     Object.keys(A.padrao).forEach(function(k){ $(k).value = A.padrao[k]; $("o"+cap(k)).value = A.padrao[k]; });
